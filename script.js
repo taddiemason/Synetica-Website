@@ -101,39 +101,51 @@ const contactForm = document.getElementById('contactForm');
 contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        message: document.getElementById('message').value
-    };
+    const formData = new FormData(contactForm);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const message = formData.get('message');
 
     // Basic validation
-    if (!formData.name || !formData.email || !formData.message) {
+    if (!name || !email || !message) {
         showNotification('Please fill in all required fields.', 'error');
         return;
     }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    if (!email.match(emailRegex)) {
         showNotification('Please enter a valid email address.', 'error');
         return;
     }
 
-    // Simulate form submission
+    // Submit form
     const submitButton = contactForm.querySelector('.btn');
     const originalText = submitButton.textContent;
     submitButton.textContent = 'Sending...';
     submitButton.disabled = true;
 
-    // Simulate API call
-    setTimeout(() => {
-        showNotification('Thank you for your message! We will get back to you soon.', 'success');
-        contactForm.reset();
+    try {
+        const response = await fetch('/contact', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showNotification(data.message || 'Thank you! We will contact you soon.', 'success');
+            contactForm.reset();
+        } else {
+            showNotification(data.error || 'Failed to send message. Please try again.', 'error');
+        }
+    } catch (error) {
+        console.error('Form submission error:', error);
+        showNotification('Failed to send message. Please try again.', 'error');
+    } finally {
         submitButton.textContent = originalText;
         submitButton.disabled = false;
-    }, 1500);
+    }
 });
 
 // ===========================
