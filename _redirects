@@ -1,0 +1,13 @@
+# Redirects for Synetica Website
+
+# Redirect www to non-www (uncomment if needed)
+# https://www.your-domain.com/* https://your-domain.com/:splat 301
+
+# Redirect non-www to www (uncomment if needed)
+# https://your-domain.com/* https://www.your-domain.com/:splat 301
+
+# SPA fallback - serve index.html for all routes (if using client-side routing)
+# /* /index.html 200
+
+# Example: Old URL to new URL redirect
+# /old-page /new-page 301
