@@ -16,8 +16,10 @@ const CACHE_CONFIG = {
 const FILE_MAP = {
   '/': 'index.html',
   '/index.html': 'index.html',
+  '/careers.html': 'careers.html',
   '/styles.css': 'styles.css',
   '/script.js': 'script.js',
+  '/careers.js': 'careers.js',
 };
 
 // Content type mappings
