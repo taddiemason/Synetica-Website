@@ -1,0 +1,14 @@
+name = "synetica-website"
+compatibility_date = "2024-12-05"
+
+# Pages configuration
+pages_build_output_dir = "."
+
+# Environment variables (if needed)
+[vars]
+ENVIRONMENT = "production"
+
+# Route configuration
+[[routes]]
+pattern = "*"
+zone_name = "your-domain.com"
