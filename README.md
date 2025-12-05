@@ -190,5 +190,5 @@ The contact form currently simulates submission. To connect to a backend:
 
 For questions or support:
 - Email: info@synetica.com
-- Phone: +1 (555) 123-4567
-- Address: 123 Technology Drive, Business District, ST 12345
+- Phone: (716) 341-3678
+- Address: 219 Lexington Ave, Buffalo, NY 14222
