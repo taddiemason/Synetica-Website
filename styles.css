@@ -1,22 +1,35 @@
 /* ===========================
-   CSS Variables
+   CSS Variables - Dark Theme
    =========================== */
 :root {
-    --primary-color: #2563eb;
-    --primary-dark: #1e40af;
-    --secondary-color: #8b5cf6;
-    --accent-color: #06b6d4;
-    --text-dark: #1e293b;
-    --text-light: #64748b;
-    --text-white: #ffffff;
-    --bg-light: #f8fafc;
-    --bg-dark: #0f172a;
-    --bg-card: #ffffff;
-    --border-color: #e2e8f0;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    /* Primary accent colors */
+    --primary-color: #00B3B3;
+    --primary-dark: #009099;
+    --secondary-color: #6366F1;
+    --accent-color: #00B3B3;
+
+    /* Text colors */
+    --text-dark: #FFFFFF;
+    --text-light: #D1D5DB;
+    --text-muted: #9CA3AF;
+    --text-white: #FFFFFF;
+    --text-on-primary: #041016;
+
+    /* Background colors */
+    --bg-light: #0B1324;
+    --bg-dark: #050B16;
+    --bg-card: #111928;
+
+    /* Border colors */
+    --border-color: #1F2933;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+
+    /* Transitions */
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
@@ -116,25 +129,26 @@ section {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: var(--text-white);
+    background: var(--primary-color);
+    color: var(--text-on-primary);
     box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
+    background: var(--primary-dark);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
 }
 
 .btn-secondary {
     background: transparent;
-    color: var(--text-white);
-    border-color: var(--text-white);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .btn-secondary:hover {
-    background: var(--text-white);
-    color: var(--primary-color);
+    background: var(--primary-color);
+    color: var(--text-on-primary);
 }
 
 /* ===========================
