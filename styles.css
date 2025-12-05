@@ -164,6 +164,26 @@ section {
     align-items: center;
 }
 
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo a {
+    display: inline-block;
+    line-height: 0;
+}
+
+.logo-img {
+    height: 40px;
+    width: auto;
+    transition: var(--transition-fast);
+}
+
+.logo-img:hover {
+    opacity: 0.8;
+}
+
 .logo h1 {
     font-size: 1.5rem;
     font-weight: 700;
@@ -720,6 +740,10 @@ section {
    Responsive Design - Tablet
    =========================== */
 @media (min-width: 768px) {
+    .logo-img {
+        height: 45px;
+    }
+
     .section-title {
         font-size: 2.5rem;
     }
