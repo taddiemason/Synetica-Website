@@ -56,29 +56,12 @@ A modern, mobile-first website for Synetica, a Managed Service Provider (MSP) sp
 
 ## Deployment
 
-### Cloudflare Pages (Recommended)
+### Cloudflare Workers (Recommended)
 
-This website is configured for easy deployment on Cloudflare Pages:
+This website uses **Cloudflare Workers** to serve static files from GitHub with intelligent caching and CDN distribution.
 
-#### Option 1: Deploy via Cloudflare Dashboard (Easiest)
-1. Log in to your [Cloudflare Dashboard](https://dash.cloudflare.com)
-2. Go to **Pages** > **Create a project**
-3. Connect your GitHub account and select this repository
-4. Configure build settings:
-   - **Framework preset**: None
-   - **Build command**: Leave empty (not needed for static sites)
-   - **Build output directory**: `/` (root directory)
-5. Click **Save and Deploy**
+#### Deploy via Wrangler CLI
 
-That's it! Cloudflare Pages will automatically use the `_headers` and `_redirects` files.
-
-Your site will be automatically deployed with:
-- Free SSL/TLS certificates
-- Global CDN distribution
-- Automatic deployments on git push
-- Custom domain support
-
-#### Option 2: Deploy via Wrangler CLI
 ```bash
 # Install Wrangler CLI
 npm install -g wrangler
@@ -86,23 +69,56 @@ npm install -g wrangler
 # Login to Cloudflare
 wrangler login
 
-# Deploy to Cloudflare Pages
-wrangler pages deploy . --project-name=synetica-website
+# Deploy to Cloudflare Workers
+wrangler deploy
 ```
+
+That's it! Your site will be deployed to Cloudflare's global network.
+
+#### How It Works
+
+The `worker.js` file:
+- Fetches files directly from this GitHub repository
+- Implements intelligent caching (HTML: 1 hour, CSS/JS: 1 day, Images: 1 week)
+- Adds security headers automatically
+- Serves content through Cloudflare's global CDN
+- No build process required!
+
+Your site will be automatically deployed with:
+- ✅ Free SSL/TLS certificates
+- ✅ Global CDN distribution (300+ locations)
+- ✅ Automatic caching and optimization
+- ✅ Custom domain support
+- ✅ Built-in security headers
 
 ### Configuration Files
 
-- **_headers**: HTTP security headers and caching rules for optimal performance
-- **_redirects**: URL redirect rules (customize as needed for your domain)
+- **wrangler.toml**: Cloudflare Workers configuration
+- **worker.js**: Edge worker script that serves files and handles caching
+- **_headers**: Additional HTTP headers (optional, for Pages deployment)
+- **_redirects**: URL redirects (optional, for Pages deployment)
 - **.gitignore**: Excludes build artifacts and sensitive files
 
 ### Custom Domain Setup
 
-1. In Cloudflare Pages, go to your project
-2. Click **Custom domains**
-3. Add your domain (e.g., `synetica.com`)
-4. Update DNS records as instructed
-5. SSL certificate will be automatically provisioned
+After deploying:
+1. Go to your [Cloudflare Dashboard](https://dash.cloudflare.com)
+2. Navigate to **Workers & Pages** > Your worker
+3. Click **Settings** > **Domains & Routes**
+4. Add your custom domain (e.g., `synetica.com`)
+5. Update DNS records as instructed
+6. SSL certificate will be automatically provisioned
+
+### Alternative: Cloudflare Pages
+
+You can also deploy as a static site on Cloudflare Pages:
+1. In Cloudflare Dashboard, go to **Pages** > **Create a project**
+2. Connect this repository
+3. **Important**: Leave **Build command** empty
+4. Set **Build output directory** to `/` (root)
+5. Deploy!
+
+For Pages deployment, the `_headers` and `_redirects` files will be automatically used.
 
 ## File Structure
 
@@ -111,8 +127,10 @@ Synetica-Website/
 ├── index.html          # Main HTML file
 ├── styles.css          # All styles (mobile-first)
 ├── script.js           # Interactive features
-├── _headers            # Cloudflare Pages headers configuration
-├── _redirects          # Cloudflare Pages redirects
+├── wrangler.toml       # Cloudflare Workers configuration
+├── worker.js           # Cloudflare Worker (serves files from GitHub)
+├── _headers            # HTTP headers (for Pages deployment)
+├── _redirects          # URL redirects (for Pages deployment)
 ├── .gitignore          # Git ignore rules
 └── README.md           # Documentation
 ```
