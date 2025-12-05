@@ -2,10 +2,10 @@
    CSS Variables
    =========================== */
 :root {
-    --primary-color: #2563eb;
-    --primary-dark: #1e40af;
-    --secondary-color: #8b5cf6;
-    --accent-color: #06b6d4;
+    --primary-color: #00BCD4;
+    --primary-dark: #0097A7;
+    --secondary-color: #1E3A8A;
+    --accent-color: #00BCD4;
     --text-dark: #1e293b;
     --text-light: #64748b;
     --text-white: #ffffff;
@@ -175,7 +175,7 @@ section {
 }
 
 .logo-img {
-    height: 40px;
+    height: 50px;
     width: auto;
     transition: var(--transition-fast);
 }
@@ -741,7 +741,7 @@ section {
    =========================== */
 @media (min-width: 768px) {
     .logo-img {
-        height: 45px;
+        height: 60px;
     }
 
     .section-title {
