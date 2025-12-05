@@ -895,22 +895,23 @@ section {
 
 /* Why Work Here Section */
 .why-work-here {
-    padding: 6rem 0;
+    padding: 4rem 0;
     background: var(--bg-dark);
 }
 
 .benefits-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-top: 3rem;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
 }
 
 .benefit-card {
     background: var(--bg-card);
-    padding: 2rem;
-    border-radius: 0.75rem;
-    border: 1px solid var(--border-color);
+    padding: 1.75rem;
+    border-radius: 0.875rem;
+    border: 2px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
@@ -939,46 +940,46 @@ section {
 }
 
 .benefit-icon {
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3rem;
+    height: 3rem;
     background: var(--primary-color);
-    border-radius: 0.75rem;
+    border-radius: 0.625rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .benefit-icon svg {
-    width: 2rem;
-    height: 2rem;
+    width: 1.75rem;
+    height: 1.75rem;
     stroke: var(--text-on-primary);
 }
 
 .benefit-card h3 {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.625rem;
 }
 
 .benefit-card p {
     color: var(--text-light);
-    line-height: 1.7;
-    font-size: 0.95rem;
+    line-height: 1.6;
+    font-size: 0.9375rem;
 }
 
 /* Open Positions */
 .open-positions {
-    padding: 6rem 0;
+    padding: 4rem 0;
     background: var(--bg-light);
 }
 
 .jobs-list {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    margin-top: 3rem;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
     max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
@@ -986,11 +987,13 @@ section {
 
 .job-card {
     background: var(--bg-card);
-    padding: 2.5rem;
+    padding: 1.5rem;
     border-radius: 1rem;
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--border-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: all var(--transition-normal);
     position: relative;
+    overflow: hidden;
 }
 
 .job-card::before {
@@ -998,38 +1001,36 @@ section {
     position: absolute;
     top: 0;
     left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--primary-color);
-    opacity: 0;
-    transition: opacity var(--transition-normal);
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    transform: scaleX(0);
+    transition: transform var(--transition-normal);
 }
 
 .job-card:hover::before {
-    opacity: 1;
+    transform: scaleX(1);
 }
 
 .job-card:hover {
     border-color: var(--primary-color);
-    box-shadow: 0 10px 30px rgba(0, 179, 179, 0.1);
-    transform: translateX(4px);
+    box-shadow: 0 12px 40px rgba(0, 179, 179, 0.15);
+    transform: translateY(-4px);
 }
 
 .job-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
 }
 
 .job-header h3 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 0.75rem;
-    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
 }
 
 .job-meta {
@@ -1104,8 +1105,9 @@ section {
 
 .apply-btn {
     white-space: nowrap;
-    min-width: 140px;
-    padding: 0.75rem 1.5rem;
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    font-weight: 600;
 }
 
 /* Application Form */
@@ -1210,14 +1212,55 @@ section {
 @media (min-width: 640px) {
     .benefits-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.75rem;
+        gap: 1.5rem;
+    }
+
+    .benefit-card {
+        padding: 2rem;
+    }
+
+    .job-card {
+        padding: 2rem;
+    }
+
+    .jobs-list {
+        gap: 2rem;
     }
 }
 
 @media (min-width: 768px) {
     .benefits-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
+        gap: 1.75rem;
+    }
+
+    .benefit-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .benefit-icon svg {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .benefit-card h3 {
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .benefit-card p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+
+    .why-work-here {
+        padding: 5rem 0;
+    }
+
+    .open-positions {
+        padding: 5rem 0;
     }
 
     .form-row {
@@ -1225,17 +1268,44 @@ section {
     }
 
     .job-header {
-        flex-wrap: nowrap;
+        flex-direction: row;
+        justify-content: space-between;
         align-items: flex-start;
+    }
+
+    .job-header h3 {
+        font-size: 1.75rem;
+    }
+
+    .apply-btn {
+        width: auto;
+        min-width: 150px;
+    }
+
+    .job-card {
+        padding: 2.5rem;
     }
 }
 
 @media (min-width: 1024px) {
     .benefits-grid {
         grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+
+    .why-work-here {
+        padding: 6rem 0;
+    }
+
+    .open-positions {
+        padding: 6rem 0;
     }
 
     .careers-form {
         padding: 3.5rem;
+    }
+
+    .jobs-list {
+        gap: 2.5rem;
     }
 }
