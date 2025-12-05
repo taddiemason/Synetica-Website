@@ -65,9 +65,12 @@ This website is configured for easy deployment on Cloudflare Pages:
 2. Go to **Pages** > **Create a project**
 3. Connect your GitHub account and select this repository
 4. Configure build settings:
-   - **Build command**: Leave empty (static site)
+   - **Framework preset**: None
+   - **Build command**: Leave empty (not needed for static sites)
    - **Build output directory**: `/` (root directory)
 5. Click **Save and Deploy**
+
+That's it! Cloudflare Pages will automatically use the `_headers` and `_redirects` files.
 
 Your site will be automatically deployed with:
 - Free SSL/TLS certificates
@@ -89,9 +92,8 @@ wrangler pages deploy . --project-name=synetica-website
 
 ### Configuration Files
 
-- **wrangler.toml**: Cloudflare Workers/Pages configuration
-- **_headers**: HTTP security headers and caching rules
-- **_redirects**: URL redirect rules (customize as needed)
+- **_headers**: HTTP security headers and caching rules for optimal performance
+- **_redirects**: URL redirect rules (customize as needed for your domain)
 - **.gitignore**: Excludes build artifacts and sensitive files
 
 ### Custom Domain Setup
@@ -109,9 +111,8 @@ Synetica-Website/
 ├── index.html          # Main HTML file
 ├── styles.css          # All styles (mobile-first)
 ├── script.js           # Interactive features
-├── wrangler.toml       # Cloudflare configuration
-├── _headers            # HTTP headers configuration
-├── _redirects          # URL redirects
+├── _headers            # Cloudflare Pages headers configuration
+├── _redirects          # Cloudflare Pages redirects
 ├── .gitignore          # Git ignore rules
 └── README.md           # Documentation
 ```
