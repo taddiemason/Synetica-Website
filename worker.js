@@ -1,11 +1,12 @@
 /**
  * Cloudflare Worker for Synetica MSP Website
  * Serves static files with caching and proper content types
+ * Version: 2025-12-05 - HTML caching disabled for immediate updates
  */
 
-// Cache configuration
+// Cache configuration - HTML caching disabled to ensure fresh content
 const CACHE_CONFIG = {
-  HTML: 'public, max-age=3600, s-maxage=86400', // 1 hour browser, 1 day CDN
+  HTML: 'no-cache, no-store, must-revalidate, max-age=0', // Always fetch fresh HTML
   CSS: 'public, max-age=86400, s-maxage=604800', // 1 day browser, 1 week CDN
   JS: 'public, max-age=86400, s-maxage=604800',
   IMAGES: 'public, max-age=604800, s-maxage=2592000', // 1 week browser, 30 days CDN
@@ -54,22 +55,30 @@ export default {
       // Build GitHub URL
       const githubUrl = GITHUB_BASE + fileName;
 
-      // Try cache first
-      const cache = caches.default;
-      let response = await cache.match(request);
+      // Determine file extension
+      const extension = fileName.substring(fileName.lastIndexOf('.'));
+      const isHTML = extension === '.html' || fileName === 'index.html';
 
-      if (response) {
-        // Return cached response
-        const headers = new Headers(response.headers);
-        headers.set('X-Cache', 'HIT');
-        return new Response(response.body, {
-          status: response.status,
-          statusText: response.statusText,
-          headers: headers,
-        });
+      // Try cache first (skip cache for HTML files to ensure fresh content)
+      const cache = caches.default;
+      let response;
+
+      if (!isHTML) {
+        response = await cache.match(request);
+
+        if (response) {
+          // Return cached response
+          const headers = new Headers(response.headers);
+          headers.set('X-Cache', 'HIT');
+          return new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: headers,
+          });
+        }
       }
 
-      // Fetch from GitHub
+      // Fetch from GitHub (always fresh for HTML files)
       response = await fetch(githubUrl);
 
       if (!response.ok) {
@@ -77,7 +86,6 @@ export default {
       }
 
       // Determine content type
-      const extension = fileName.substring(fileName.lastIndexOf('.'));
       const contentType = CONTENT_TYPES[extension] || 'text/plain';
 
       // Determine cache control
@@ -114,8 +122,10 @@ export default {
         headers: headers,
       });
 
-      // Store in cache
-      ctx.waitUntil(cache.put(request, modifiedResponse.clone()));
+      // Store in cache (skip caching HTML files for immediate updates)
+      if (!isHTML) {
+        ctx.waitUntil(cache.put(request, modifiedResponse.clone()));
+      }
 
       return modifiedResponse;
     } catch (error) {
