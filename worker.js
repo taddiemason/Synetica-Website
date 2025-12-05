@@ -38,7 +38,7 @@ const CONTENT_TYPES = {
 };
 
 // GitHub base URL for raw files
-const GITHUB_BASE = 'https://raw.githubusercontent.com/taddiemason/Synetica-Website/claude/synetica-msp-website-012TNubQC37JiDpKAZqpcmHL/';
+const GITHUB_BASE = 'https://raw.githubusercontent.com/taddiemason/Synetica-Website/claude/redesign-career-page-018i6fVFEgcCbBNssm1WZFx2/';
 
 export default {
   async fetch(request, env, ctx) {
