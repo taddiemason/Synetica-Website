@@ -1,14 +1,14 @@
 /**
  * Cloudflare Worker for Synetica MSP Website
  * Serves static files with caching and proper content types
- * Version: 2025-12-05 - HTML caching disabled for immediate updates
+ * Version: 2025-12-05 - NUCLEAR: All caching disabled for immediate updates
  */
 
-// Cache configuration - HTML caching disabled to ensure fresh content
+// Cache configuration - COMPLETELY DISABLED FOR IMMEDIATE UPDATES
 const CACHE_CONFIG = {
   HTML: 'no-cache, no-store, must-revalidate, max-age=0', // Always fetch fresh HTML
-  CSS: 'public, max-age=86400, s-maxage=604800', // 1 day browser, 1 week CDN
-  JS: 'public, max-age=86400, s-maxage=604800',
+  CSS: 'no-cache, no-store, must-revalidate, max-age=0', // Always fetch fresh CSS
+  JS: 'no-cache, no-store, must-revalidate, max-age=0', // Always fetch fresh JS
   IMAGES: 'public, max-age=604800, s-maxage=2592000', // 1 week browser, 30 days CDN
 };
 
@@ -59,29 +59,13 @@ export default {
 
       // Determine file extension
       const extension = fileName.substring(fileName.lastIndexOf('.'));
-      const isHTML = extension === '.html' || fileName === 'index.html';
 
-      // Try cache first (skip cache for HTML files to ensure fresh content)
-      const cache = caches.default;
-      let response;
+      // CACHING COMPLETELY DISABLED - Always fetch fresh from GitHub
+      // const cache = caches.default;
+      // let response = await cache.match(request);
 
-      if (!isHTML) {
-        response = await cache.match(request);
-
-        if (response) {
-          // Return cached response
-          const headers = new Headers(response.headers);
-          headers.set('X-Cache', 'HIT');
-          return new Response(response.body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers: headers,
-          });
-        }
-      }
-
-      // Fetch from GitHub (always fresh for HTML files)
-      response = await fetch(githubUrl);
+      // Fetch from GitHub (bypassing cache entirely)
+      let response = await fetch(githubUrl);
 
       if (!response.ok) {
         return new Response(`File not found: ${fileName}`, { status: 404 });
@@ -124,10 +108,8 @@ export default {
         headers: headers,
       });
 
-      // Store in cache (skip caching HTML files for immediate updates)
-      if (!isHTML) {
-        ctx.waitUntil(cache.put(request, modifiedResponse.clone()));
-      }
+      // CACHING DISABLED - Not storing in cache
+      // ctx.waitUntil(cache.put(request, modifiedResponse.clone()));
 
       return modifiedResponse;
     } catch (error) {
