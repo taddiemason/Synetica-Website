@@ -66,12 +66,12 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         personalizations: [{
-          to: [{ email: 'careers@synetica.com', name: 'Synetica HR' }],
-          dkim_domain: 'synetica.com',
+          to: [{ email: 'careers@synetica.us', name: 'Synetica HR' }],
+          dkim_domain: 'synetica.us',
           dkim_selector: 'mailchannels',
         }],
         from: {
-          email: 'noreply@synetica.com',
+          email: 'noreply@synetica.us',
           name: 'Synetica Careers Portal',
         },
         reply_to: {
@@ -126,7 +126,7 @@ export async function onRequestPost(context) {
     console.error('Career application submission error:', error);
     return new Response(JSON.stringify({
       success: false,
-      error: 'Failed to submit application. Please email your resume to careers@synetica.com'
+      error: 'Failed to submit application. Please email your resume to careers@synetica.us'
     }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
