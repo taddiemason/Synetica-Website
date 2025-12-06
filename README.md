@@ -105,7 +105,7 @@ After deploying:
 1. Go to your [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Navigate to **Workers & Pages** > Your worker
 3. Click **Settings** > **Domains & Routes**
-4. Add your custom domain (e.g., `synetica.com`)
+4. Add your custom domain (e.g., `synetica.us`)
 5. Update DNS records as instructed
 6. SSL certificate will be automatically provisioned
 
@@ -189,6 +189,6 @@ The contact form currently simulates submission. To connect to a backend:
 ## Contact
 
 For questions or support:
-- Email: info@synetica.com
+- Email: info@synetica.us
 - Phone: (716) 341-3678
 - Address: 219 Lexington Ave, Buffalo, NY 14222
