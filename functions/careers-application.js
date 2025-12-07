@@ -67,8 +67,6 @@ export async function onRequestPost(context) {
       body: JSON.stringify({
         personalizations: [{
           to: [{ email: 'careers@synetica.us', name: 'Synetica HR' }],
-          dkim_domain: 'synetica.us',
-          dkim_selector: 'mailchannels',
         }],
         from: {
           email: 'noreply@synetica.us',
