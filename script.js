@@ -126,7 +126,7 @@ contactForm.addEventListener('submit', async (e) => {
     submitButton.disabled = true;
 
     try {
-        const response = await fetch('/contact', {
+        const response = await fetch('/api/contact', {
             method: 'POST',
             body: formData
         });
@@ -137,7 +137,7 @@ contactForm.addEventListener('submit', async (e) => {
             showNotification(data.message || 'Thank you! We will contact you soon.', 'success');
             contactForm.reset();
         } else {
-            showNotification(data.error || 'Failed to send message. Please try again.', 'error');
+            showNotification(data.message || 'Failed to send message. Please try again.', 'error');
         }
     } catch (error) {
         console.error('Form submission error:', error);
