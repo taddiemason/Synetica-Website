@@ -1,0 +1,1 @@
+v=mc1 domain=synetica.us
