@@ -32,8 +32,6 @@ export async function onRequestPost(context) {
       body: JSON.stringify({
         personalizations: [{
           to: [{ email: 'info@synetica.us', name: 'Synetica' }],
-          dkim_domain: 'synetica.us',
-          dkim_selector: 'mailchannels',
         }],
         from: {
           email: 'noreply@synetica.us',
