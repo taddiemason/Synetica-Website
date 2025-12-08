@@ -1,0 +1,7 @@
+name = "synetica-website"
+compatibility_date = "2025-12-08"
+main = "_worker.js"
+
+# Advanced Mode: Using _worker.js allows custom worker logic
+# while preserving Cloudflare Pages Functions
+# Functions in /functions/ directory are still available
