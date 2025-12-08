@@ -60,7 +60,7 @@ export async function onRequestPost(context) {
 
     // Prepare Web3Forms payload
     const web3formsData = new FormData();
-    web3formsData.append('access_key', '96109e90-d006-4c97-9436-77ad8757b056');
+    web3formsData.append('access_key', '47ebe115-0067-49be-a556-4deafa5dbb65');
     web3formsData.append('subject', `New Job Application: ${position} - ${firstName} ${lastName}`);
     web3formsData.append('from_name', `${firstName} ${lastName}`);
     web3formsData.append('email', email);
