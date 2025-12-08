@@ -40,6 +40,7 @@ export async function onRequestPost({ request, env }) {
     web3formsData.append('message', message);
     web3formsData.append('subject', `New Contact from ${name} - Synetica Website`);
     web3formsData.append('from_name', 'Synetica Website');
+    web3formsData.append('to_email', 'info@synetica.us');
     web3formsData.append('redirect', 'false');
 
     console.log('Sending to Web3Forms:', {
@@ -58,6 +59,7 @@ export async function onRequestPost({ request, env }) {
 
     const result = await response.json();
 
+    console.log('Web3Forms response status:', response.status);
     console.log('Web3Forms response:', result);
 
     if (result.success) {
@@ -69,10 +71,13 @@ export async function onRequestPost({ request, env }) {
         headers: corsHeaders
       });
     } else {
-      console.error('Web3Forms error:', result);
+      console.error('Web3Forms error:', {
+        status: response.status,
+        result: result
+      });
       return new Response(JSON.stringify({
         success: false,
-        message: result.message || 'Failed to send message. Please try again.'
+        message: `Error: ${result.message || 'Failed to send message. Please try again.'}`
       }), {
         status: 500,
         headers: corsHeaders
