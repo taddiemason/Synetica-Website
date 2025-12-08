@@ -56,83 +56,70 @@ A modern, mobile-first website for Synetica, a Managed Service Provider (MSP) sp
 
 ## Deployment
 
-### Cloudflare Workers (Recommended)
+### Cloudflare Pages (Current Setup)
 
-This website uses **Cloudflare Workers** to serve static files from GitHub with intelligent caching and CDN distribution.
+This website is deployed on **Cloudflare Pages** with serverless Functions for contact form handling.
 
-#### Deploy via Wrangler CLI
+#### Automatic Deployment
 
-```bash
-# Install Wrangler CLI
-npm install -g wrangler
+The site automatically deploys from this GitHub repository using Cloudflare Pages:
 
-# Login to Cloudflare
-wrangler login
+1. **Static Files**: HTML, CSS, JS served from the repository root
+2. **Serverless Functions**: Located in `/functions/` directory
+   - `/functions/api/contact.js` → Routes to `/api/contact`
+   - `/functions/careers-application.js` → Routes to `/careers-application`
 
-# Deploy to Cloudflare Workers
-wrangler deploy
-```
+#### Cloudflare Pages Configuration
 
-That's it! Your site will be deployed to Cloudflare's global network.
+**IMPORTANT**: The build settings must be configured correctly in Cloudflare Dashboard:
+
+1. Go to **Workers & Pages** > **Synetica Website** > **Settings** > **Builds & deployments**
+2. Configure build settings:
+   - **Build command**: Leave empty or set to `echo "No build needed"`
+   - **Build output directory**: `/` (root directory)
+3. **Do NOT use** `npx wrangler deploy` or any worker deployment commands
 
 #### How It Works
 
-The `worker.js` file:
-- Fetches files directly from this GitHub repository
-- Implements intelligent caching (HTML: 1 hour, CSS/JS: 1 day, Images: 1 week)
-- Adds security headers automatically
-- Serves content through Cloudflare's global CDN
-- No build process required!
+- **Static files** are served directly from the repository
+- **Functions** are automatically deployed from the `/functions/` directory
+- **Automatic routing**: Cloudflare Pages routes requests based on file structure
+  - `/api/contact` → `/functions/api/contact.js`
+  - `/careers-application` → `/functions/careers-application.js`
 
-Your site will be automatically deployed with:
+Your site is deployed with:
 - ✅ Free SSL/TLS certificates
 - ✅ Global CDN distribution (300+ locations)
-- ✅ Automatic caching and optimization
+- ✅ Serverless Functions for form handling
+- ✅ Web3Forms integration for email delivery
 - ✅ Custom domain support
 - ✅ Built-in security headers
-
-### Configuration Files
-
-- **wrangler.toml**: Cloudflare Workers configuration
-- **worker.js**: Edge worker script that serves files and handles caching
-- **_headers**: Additional HTTP headers (optional, for Pages deployment)
-- **_redirects**: URL redirects (optional, for Pages deployment)
-- **.gitignore**: Excludes build artifacts and sensitive files
 
 ### Custom Domain Setup
 
 After deploying:
 1. Go to your [Cloudflare Dashboard](https://dash.cloudflare.com)
-2. Navigate to **Workers & Pages** > Your worker
-3. Click **Settings** > **Domains & Routes**
+2. Navigate to **Workers & Pages** > **Synetica Website**
+3. Click **Custom domains** > **Set up a custom domain**
 4. Add your custom domain (e.g., `synetica.us`)
 5. Update DNS records as instructed
 6. SSL certificate will be automatically provisioned
-
-### Alternative: Cloudflare Pages
-
-You can also deploy as a static site on Cloudflare Pages:
-1. In Cloudflare Dashboard, go to **Pages** > **Create a project**
-2. Connect this repository
-3. **Important**: Leave **Build command** empty
-4. Set **Build output directory** to `/` (root)
-5. Deploy!
-
-For Pages deployment, the `_headers` and `_redirects` files will be automatically used.
 
 ## File Structure
 
 ```
 Synetica-Website/
-├── index.html          # Main HTML file
-├── styles.css          # All styles (mobile-first)
-├── script.js           # Interactive features
-├── wrangler.toml       # Cloudflare Workers configuration
-├── worker.js           # Cloudflare Worker (serves files from GitHub)
-├── _headers            # HTTP headers (for Pages deployment)
-├── _redirects          # URL redirects (for Pages deployment)
-├── .gitignore          # Git ignore rules
-└── README.md           # Documentation
+├── index.html                      # Main HTML file
+├── styles.css                      # All styles (mobile-first)
+├── script.js                       # Interactive features
+├── functions/                      # Cloudflare Pages Functions
+│   ├── api/
+│   │   └── contact.js             # Contact form handler (/api/contact)
+│   └── careers-application.js     # Careers form handler (/careers-application)
+├── _headers                        # HTTP headers (for Pages deployment)
+├── _redirects                      # URL redirects (for Pages deployment)
+├── .gitignore                      # Git ignore rules
+└── README.md                       # Documentation
 ```
 
 ## Customization
@@ -152,11 +139,21 @@ Edit CSS variables in `styles.css`:
 - Modify services, features, and contact details as needed
 - Replace placeholder contact information with actual data
 
-### Form Submission
-The contact form currently simulates submission. To connect to a backend:
-1. Update the form submission handler in `script.js`
-2. Replace the setTimeout simulation with an actual API call
-3. Add your backend endpoint URL
+### Contact Forms
+
+The website includes two functional contact forms powered by **Web3Forms**:
+
+1. **Contact Form** (`/api/contact`)
+   - Handler: `/functions/api/contact.js`
+   - Sends to: `info@synetica.us`
+   - Fields: Name, Email, Phone, Company, Message
+
+2. **Careers Application** (`/careers-application`)
+   - Handler: `/functions/careers-application.js`
+   - Sends to: `careers@synetica.us`
+   - Supports: Resume attachments, Position applications
+
+Both forms use Cloudflare Pages Functions with Web3Forms API for reliable email delivery.
 
 ## Performance
 
