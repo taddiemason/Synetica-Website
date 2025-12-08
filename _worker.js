@@ -46,12 +46,11 @@ export default {
       const url = new URL(request.url);
       const pathname = url.pathname;
 
-      // **IMPORTANT**: Don't handle Function routes - let Cloudflare Pages Functions handle them
-      // This allows /api/* and /careers-application to work
+      // **IMPORTANT**: Let Pages Functions handle their routes
+      // env.ASSETS.fetch() will route to Functions if they exist, otherwise to static assets
       if (pathname.startsWith('/api/') || pathname === '/careers-application') {
-        // Don't handle this request - it should go to a Function
-        // Returning fetch will pass it through
-        return fetch(request);
+        // Delegate to Pages asset/function handler
+        return env.ASSETS.fetch(request);
       }
 
       // Map the pathname to a file
