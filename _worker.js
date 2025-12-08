@@ -3,9 +3,9 @@
  * Serves static files from GitHub and routes to Pages Functions
  */
 
-// Import Functions
-import apiContact from './functions/api/contact.js';
-import careersApp from './functions/careers-application.js';
+// Import Functions (using named imports)
+import * as apiContact from './functions/api/contact.js';
+import * as careersApp from './functions/careers-application.js';
 
 // Cache configuration
 const CACHE_CONFIG = {
