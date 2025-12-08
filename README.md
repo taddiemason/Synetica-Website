@@ -192,3 +192,4 @@ For questions or support:
 - Email: info@synetica.us
 - Phone: (716) 341-3678
 - Address: 219 Lexington Ave, Buffalo, NY 14222
+  
