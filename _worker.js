@@ -1,15 +1,18 @@
 /**
  * Cloudflare Worker for Synetica MSP Website
- * Serves static files with caching and proper content types
- * Version: 2025-12-05 - NUCLEAR: All caching disabled for immediate updates
+ * Serves static files from GitHub and routes to Pages Functions
  */
 
-// Cache configuration - COMPLETELY DISABLED FOR IMMEDIATE UPDATES
+// Import Functions
+import apiContact from './functions/api/contact.js';
+import careersApp from './functions/careers-application.js';
+
+// Cache configuration
 const CACHE_CONFIG = {
-  HTML: 'no-cache, no-store, must-revalidate, max-age=0', // Always fetch fresh HTML
-  CSS: 'no-cache, no-store, must-revalidate, max-age=0', // Always fetch fresh CSS
-  JS: 'no-cache, no-store, must-revalidate, max-age=0', // Always fetch fresh JS
-  IMAGES: 'public, max-age=604800, s-maxage=2592000', // 1 week browser, 30 days CDN
+  HTML: 'no-cache, no-store, must-revalidate, max-age=0',
+  CSS: 'no-cache, no-store, must-revalidate, max-age=0',
+  JS: 'no-cache, no-store, must-revalidate, max-age=0',
+  IMAGES: 'public, max-age=604800, s-maxage=2592000',
 };
 
 // File mappings
@@ -46,14 +49,26 @@ export default {
       const url = new URL(request.url);
       const pathname = url.pathname;
 
-      // **IMPORTANT**: Let Pages Functions handle their routes
-      // env.ASSETS.fetch() will route to Functions if they exist, otherwise to static assets
-      if (pathname.startsWith('/api/') || pathname === '/careers-application') {
-        // Delegate to Pages asset/function handler
-        return env.ASSETS.fetch(request);
+      // Route to Functions
+      if (pathname === '/api/contact') {
+        if (request.method === 'POST') {
+          return apiContact.onRequestPost({ request, env, ctx });
+        } else if (request.method === 'OPTIONS') {
+          return apiContact.onRequestOptions();
+        }
+        return new Response('Method not allowed', { status: 405 });
       }
 
-      // Map the pathname to a file
+      if (pathname === '/careers-application') {
+        if (request.method === 'POST') {
+          return careersApp.onRequestPost({ request, env, ctx });
+        } else if (request.method === 'OPTIONS') {
+          return careersApp.onRequestOptions();
+        }
+        return new Response('Method not allowed', { status: 405 });
+      }
+
+      // Handle static files from GitHub
       let fileName = FILE_MAP[pathname] || pathname.slice(1);
 
       // Security: Prevent directory traversal
@@ -63,26 +78,19 @@ export default {
 
       // Build GitHub URL
       const githubUrl = GITHUB_BASE + fileName;
-
-      // Determine file extension
       const extension = fileName.substring(fileName.lastIndexOf('.'));
 
-      // CACHING COMPLETELY DISABLED - Always fetch fresh from GitHub
-      // const cache = caches.default;
-      // let response = await cache.match(request);
-
-      // Fetch from GitHub (bypassing cache entirely)
+      // Fetch from GitHub
       let response = await fetch(githubUrl);
 
       if (!response.ok) {
         return new Response(`File not found: ${fileName}`, { status: 404 });
       }
 
-      // Determine content type
+      // Determine content type and cache control
       const contentType = CONTENT_TYPES[extension] || 'text/plain';
-
-      // Determine cache control
       let cacheControl;
+
       if (extension === '.html') {
         cacheControl = CACHE_CONFIG.HTML;
       } else if (extension === '.css') {
@@ -101,7 +109,6 @@ export default {
         'Cache-Control': cacheControl,
         'X-Cache': 'MISS',
         'X-Content-Source': 'GitHub',
-        // Security headers
         'X-Content-Type-Options': 'nosniff',
         'X-Frame-Options': 'DENY',
         'X-XSS-Protection': '1; mode=block',
@@ -109,20 +116,15 @@ export default {
         'Permissions-Policy': 'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()',
       });
 
-      const modifiedResponse = new Response(response.body, {
+      return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,
         headers: headers,
       });
-
-      // CACHING DISABLED - Not storing in cache
-      // ctx.waitUntil(cache.put(request, modifiedResponse.clone()));
-
-      return modifiedResponse;
     } catch (error) {
       console.error('Worker error:', error);
       return new Response(
-        `Error loading website: ${error.message}`,
+        `Error: ${error.message}`,
         {
           status: 500,
           headers: { 'Content-Type': 'text/plain' }
