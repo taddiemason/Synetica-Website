@@ -1,4 +1,5 @@
 // /functions/api/contact.js
+// Using Web3Forms for contact form submissions
 export async function onRequestPost({ request, env }) {
   // Add CORS headers
   const corsHeaders = {
@@ -29,82 +30,49 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    // Email body with HTML formatting
-    const emailBody = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #2563eb;">New Contact Form Submission</h2>
-        <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
-          <p><strong>Company:</strong> ${company || 'Not provided'}</p>
-        </div>
-        <div style="margin-top: 20px;">
-          <p><strong>Message:</strong></p>
-          <p style="white-space: pre-wrap;">${message}</p>
-        </div>
-      </div>
-    `.trim();
+    // Prepare Web3Forms payload
+    const web3formsData = new FormData();
+    web3formsData.append('access_key', '96109e90-d006-4c97-9436-77ad8757b056');
+    web3formsData.append('name', name);
+    web3formsData.append('email', email);
+    web3formsData.append('phone', phone || 'Not provided');
+    web3formsData.append('company', company || 'Not provided');
+    web3formsData.append('message', message);
+    web3formsData.append('subject', `New Contact from ${name} - Synetica Website`);
+    web3formsData.append('from_name', 'Synetica Website');
+    web3formsData.append('redirect', 'false');
 
-    // Send email using MailChannels
-    const emailPayload = {
-      personalizations: [
-        {
-          to: [{ email: 'info@synetica.us', name: 'Synetica' }],
-          dkim_domain: 'synetica.us',
-          dkim_selector: 'mailchannels',
-        },
-      ],
-      from: {
-        email: 'noreply@synetica.us',
-        name: 'Synetica Website',
-      },
-      reply_to: {
-        email: email,
-        name: name,
-      },
-      subject: `New Contact from ${name}`,
-      content: [
-        {
-          type: 'text/html',
-          value: emailBody,
-        },
-      ],
-    };
-
-    console.log('Sending email with payload:', JSON.stringify(emailPayload, null, 2));
-
-    const mailResponse = await fetch('https://api.mailchannels.net/tx/v1/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(emailPayload),
+    console.log('Sending to Web3Forms:', {
+      name,
+      email,
+      phone: phone || 'Not provided',
+      company: company || 'Not provided',
+      message: message.substring(0, 50) + '...'
     });
 
-    const responseText = await mailResponse.text();
-    console.log('MailChannels response status:', mailResponse.status);
-    console.log('MailChannels response:', responseText);
+    // Send to Web3Forms API
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: web3formsData
+    });
 
-    if (mailResponse.ok) {
+    const result = await response.json();
+
+    console.log('Web3Forms response:', result);
+
+    if (result.success) {
       return new Response(JSON.stringify({
         success: true,
-        message: 'Message sent successfully!'
+        message: 'Thank you! Your message has been sent successfully.'
       }), {
         status: 200,
         headers: corsHeaders
       });
     } else {
-      // Log the error for debugging
-      console.error('MailChannels error:', {
-        status: mailResponse.status,
-        statusText: mailResponse.statusText,
-        body: responseText
-      });
-
+      console.error('Web3Forms error:', result);
       return new Response(JSON.stringify({
         success: false,
-        message: `Failed to send email: ${mailResponse.statusText}. Error: ${responseText}`
+        message: result.message || 'Failed to send message. Please try again.'
       }), {
         status: 500,
         headers: corsHeaders
