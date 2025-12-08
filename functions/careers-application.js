@@ -1,9 +1,17 @@
 /**
  * Cloudflare Pages Function to handle career application submissions
- * Handles file uploads and sends applications via MailChannels
+ * Handles file uploads and sends applications via Web3Forms
  */
 
 export async function onRequestPost(context) {
+  // Add CORS headers
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json'
+  };
+
   try {
     const formData = await context.request.formData();
 
@@ -24,7 +32,7 @@ export async function onRequestPost(context) {
         error: 'Missing required fields'
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: corsHeaders
       });
     }
 
@@ -35,7 +43,7 @@ export async function onRequestPost(context) {
         error: 'Resume file is required'
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: corsHeaders
       });
     }
 
@@ -46,79 +54,64 @@ export async function onRequestPost(context) {
         error: 'Resume file size must be less than 5MB'
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: corsHeaders
       });
     }
 
-    // Read file as base64
-    const resumeBuffer = await resume.arrayBuffer();
-    const resumeBase64 = btoa(String.fromCharCode(...new Uint8Array(resumeBuffer)));
+    // Prepare Web3Forms payload
+    const web3formsData = new FormData();
+    web3formsData.append('access_key', '96109e90-d006-4c97-9436-77ad8757b056');
+    web3formsData.append('subject', `New Job Application: ${position} - ${firstName} ${lastName}`);
+    web3formsData.append('from_name', `${firstName} ${lastName}`);
+    web3formsData.append('email', email);
+    web3formsData.append('name', `${firstName} ${lastName}`);
+    web3formsData.append('phone', phone);
+    web3formsData.append('position', position);
+    web3formsData.append('experience', experience);
+    web3formsData.append('linkedin', linkedin);
+    web3formsData.append('message', coverLetter);
+    web3formsData.append('to_email', 'careers@synetica.us');
+    web3formsData.append('redirect', 'false');
 
-    // Determine file content type
-    const fileType = resume.type || 'application/pdf';
-    const fileName = resume.name || 'resume.pdf';
+    // Attach resume file
+    web3formsData.append('attachment', resume);
 
-    // Send email with resume attachment using MailChannels
-    const emailResponse = await fetch('https://api.mailchannels.net/tx/v1/send', {
+    console.log('Submitting career application to Web3Forms:', {
+      name: `${firstName} ${lastName}`,
+      email,
+      position,
+      resumeSize: resume.size,
+      resumeName: resume.name
+    });
+
+    // Send to Web3Forms API
+    const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        personalizations: [{
-          to: [{ email: 'careers@synetica.us', name: 'Synetica HR' }],
-        }],
-        from: {
-          email: 'noreply@synetica.us',
-          name: 'Synetica Careers Portal',
-        },
-        reply_to: {
-          email: email,
-          name: `${firstName} ${lastName}`,
-        },
-        subject: `New Job Application: ${position} - ${firstName} ${lastName}`,
-        content: [{
-          type: 'text/html',
-          value: `
-            <h2>New Career Application Received</h2>
-
-            <h3>Applicant Information</h3>
-            <p><strong>Name:</strong> ${firstName} ${lastName}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone}</p>
-            <p><strong>Position:</strong> ${position}</p>
-            <p><strong>Years of Experience:</strong> ${experience}</p>
-            <p><strong>LinkedIn:</strong> ${linkedin}</p>
-
-            <h3>Cover Letter</h3>
-            <p>${coverLetter.replace(/\n/g, '<br>')}</p>
-
-            <hr>
-            <p><em>Resume attached: ${fileName}</em></p>
-          `,
-        }],
-        attachments: [{
-          content: resumeBase64,
-          filename: fileName,
-          type: fileType,
-          disposition: 'attachment'
-        }]
-      }),
+      body: web3formsData
     });
 
-    if (!emailResponse.ok) {
-      const errorText = await emailResponse.text();
-      console.error('MailChannels error:', errorText);
-      throw new Error('Failed to send application email');
+    const result = await response.json();
+
+    console.log('Web3Forms response:', result);
+
+    if (result.success) {
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Application submitted successfully! We will review your application and get back to you soon.'
+      }), {
+        status: 200,
+        headers: corsHeaders
+      });
+    } else {
+      console.error('Web3Forms error:', result);
+      return new Response(JSON.stringify({
+        success: false,
+        error: result.message || 'Failed to submit application. Please email your resume to careers@synetica.us'
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
     }
-
-    return new Response(JSON.stringify({
-      success: true,
-      message: 'Application submitted successfully! We will review your application and get back to you soon.'
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
 
   } catch (error) {
     console.error('Career application submission error:', error);
@@ -127,7 +120,18 @@ export async function onRequestPost(context) {
       error: 'Failed to submit application. Please email your resume to careers@synetica.us'
     }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: corsHeaders
     });
   }
+}
+
+// Handle OPTIONS request for CORS
+export async function onRequestOptions() {
+  return new Response(null, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
 }
