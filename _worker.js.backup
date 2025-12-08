@@ -46,6 +46,14 @@ export default {
       const url = new URL(request.url);
       const pathname = url.pathname;
 
+      // **IMPORTANT**: Don't handle Function routes - let Cloudflare Pages Functions handle them
+      // This allows /api/* and /careers-application to work
+      if (pathname.startsWith('/api/') || pathname === '/careers-application') {
+        // Don't handle this request - it should go to a Function
+        // Returning fetch will pass it through
+        return fetch(request);
+      }
+
       // Map the pathname to a file
       let fileName = FILE_MAP[pathname] || pathname.slice(1);
 
