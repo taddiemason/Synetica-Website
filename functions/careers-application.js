@@ -94,8 +94,9 @@ export async function onRequestPost(context) {
 
     // Handle non-JSON responses
     let result;
+    let text;
     try {
-      const text = await response.text();
+      text = await response.text();
       console.log('Web3Forms raw response text:', text);
       result = JSON.parse(text);
       console.log('Web3Forms parsed response:', result);
