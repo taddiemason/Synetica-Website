@@ -56,51 +56,65 @@ A modern, mobile-first website for Synetica, a Managed Service Provider (MSP) sp
 
 ## Deployment
 
-### Cloudflare Pages (Current Setup)
+### Cloudflare Workers with Wrangler (Current Setup)
 
-This website is deployed on **Cloudflare Pages** with serverless Functions for contact form handling.
+This website is deployed as a **Cloudflare Worker** that serves static files from GitHub and handles contact form submissions via **Web3Forms**.
 
-#### Automatic Deployment
+#### Deploy with Wrangler CLI
 
-The site automatically deploys from this GitHub repository using Cloudflare Pages:
+```bash
+# Install Wrangler globally (if not already installed)
+npm install -g wrangler
 
-1. **Static Files**: HTML, CSS, JS served from the repository root
-2. **Serverless Functions**: Located in `/functions/` directory
-   - `/functions/api/contact.js` → Routes to `/api/contact`
-   - `/functions/careers-application.js` → Routes to `/careers-application`
+# Login to Cloudflare (first time only)
+wrangler login
 
-#### Cloudflare Pages Configuration
+# Deploy the worker
+wrangler deploy
+```
 
-**IMPORTANT**: The build settings must be configured correctly in Cloudflare Dashboard:
-
-1. Go to **Workers & Pages** > **Synetica Website** > **Settings** > **Builds & deployments**
-2. Configure build settings:
-   - **Build command**: Leave empty or set to `echo "No build needed"`
-   - **Build output directory**: `/` (root directory)
-3. **Do NOT use** `npx wrangler deploy` or any worker deployment commands
+That's it! Your site will be live on Cloudflare's global network.
 
 #### How It Works
 
-- **Static files** are served directly from the repository
-- **Functions** are automatically deployed from the `/functions/` directory
-- **Automatic routing**: Cloudflare Pages routes requests based on file structure
-  - `/api/contact` → `/functions/api/contact.js`
-  - `/careers-application` → `/functions/careers-application.js`
+The `worker.js` file:
+- **Serves static files** from this GitHub repository with intelligent caching
+- **Handles contact forms** at `/api/contact` route using Web3Forms API
+- **Handles career applications** at `/careers-application` route using Web3Forms API
+- **CORS enabled** for cross-origin requests
+- **Automatic content-type detection** for all file types
+- **Smart caching** (HTML: 1hr, CSS/JS: 1 day, Images: 1 week)
 
 Your site is deployed with:
 - ✅ Free SSL/TLS certificates
 - ✅ Global CDN distribution (300+ locations)
-- ✅ Serverless Functions for form handling
-- ✅ Web3Forms integration for email delivery
+- ✅ Integrated contact form handling (no separate Functions needed)
+- ✅ Web3Forms email delivery to info@synetica.us and careers@synetica.us
 - ✅ Custom domain support
-- ✅ Built-in security headers
+- ✅ Built-in CORS and security headers
+
+#### Configuration Files
+
+- **wrangler.toml**: Worker configuration (worker name, compatibility date)
+- **worker.js**: Main worker script with form handlers and static file serving
+
+#### Cloudflare Pages Build Settings
+
+If deploying via Cloudflare Pages with wrangler:
+
+1. Go to **Workers & Pages** > **Synetica Website** > **Settings** > **Builds & deployments**
+2. Configure build settings:
+   - **Build command**: `npx wrangler deploy`
+   - **Build output directory**: `/`
+
+The worker will automatically handle routing and form submissions.
 
 ### Custom Domain Setup
 
 After deploying:
 1. Go to your [Cloudflare Dashboard](https://dash.cloudflare.com)
-2. Navigate to **Workers & Pages** > **Synetica Website**
-3. Click **Custom domains** > **Set up a custom domain**
+2. Navigate to **Workers & Pages** > **synetica-website** (your worker)
+3. Click **Settings** > **Domains & Routes**
 4. Add your custom domain (e.g., `synetica.us`)
 5. Update DNS records as instructed
 6. SSL certificate will be automatically provisioned
@@ -112,15 +126,19 @@ Synetica-Website/
 ├── index.html                      # Main HTML file
 ├── styles.css                      # All styles (mobile-first)
 ├── script.js                       # Interactive features
-├── functions/                      # Cloudflare Pages Functions
+├── worker.js                       # Cloudflare Worker (handles forms + static files)
+├── wrangler.toml                   # Wrangler configuration
+├── functions/                      # Legacy Functions directory (not used with worker)
 │   ├── api/
-│   │   └── contact.js             # Contact form handler (/api/contact)
-│   └── careers-application.js     # Careers form handler (/careers-application)
-├── _headers                        # HTTP headers (for Pages deployment)
-├── _redirects                      # URL redirects (for Pages deployment)
+│   │   └── contact.js             # Legacy handler (functionality in worker.js)
+│   └── careers-application.js     # Legacy handler (functionality in worker.js)
+├── _headers                        # HTTP headers
+├── _redirects                      # URL redirects
 ├── .gitignore                      # Git ignore rules
 └── README.md                       # Documentation
 ```
+
+**Note:** When using `worker.js` with wrangler, the form handlers are integrated directly in the worker. The `/functions/` directory is not used.
 
 ## Customization
 
@@ -141,19 +159,21 @@ Edit CSS variables in `styles.css`:
 
 ### Contact Forms
 
-The website includes two functional contact forms powered by **Web3Forms**:
+The website includes two functional contact forms integrated in **worker.js** and powered by **Web3Forms**:
 
 1. **Contact Form** (`/api/contact`)
-   - Handler: `/functions/api/contact.js`
+   - Handler: Integrated in `worker.js` (`handleContactForm` function)
    - Sends to: `info@synetica.us`
    - Fields: Name, Email, Phone, Company, Message
+   - Web3Forms Access Key: `96109e90-d006-4c97-9436-77ad8757b056`
 
 2. **Careers Application** (`/careers-application`)
-   - Handler: `/functions/careers-application.js`
+   - Handler: Integrated in `worker.js` (`handleCareersApplication` function)
    - Sends to: `careers@synetica.us`
-   - Supports: Resume attachments, Position applications
+   - Supports: Resume attachments (up to 5MB), Position applications
+   - Web3Forms Access Key: `47ebe115-0067-49be-a556-4deafa5dbb65`
 
-Both forms use Cloudflare Pages Functions with Web3Forms API for reliable email delivery.
+Both forms are handled directly by the Cloudflare Worker with Web3Forms API for reliable email delivery.
 
 ## Performance
 
