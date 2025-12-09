@@ -3,5 +3,11 @@ main = "worker.js"
 compatibility_date = "2025-12-08"
 compatibility_flags = ["nodejs_compat"]
 
+# Serve static assets from the current directory
+[assets]
+directory = "."
+# Exclude worker files and config from being served as static assets
+not_found_handling = "404-page"
+
 [observability]
 enabled = true
