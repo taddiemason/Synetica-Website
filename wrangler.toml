@@ -1,0 +1,7 @@
+name = "synetica-website"
+main = "worker.js"
+compatibility_date = "2025-12-08"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
