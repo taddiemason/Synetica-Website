@@ -106,10 +106,24 @@ async function handleContactForm(request, corsHeaders) {
       body: web3formsData
     });
 
-    const result = await response.json();
-
     console.log('Web3Forms response status:', response.status);
-    console.log('Web3Forms response:', result);
+
+    // Handle non-JSON responses
+    let result;
+    try {
+      const text = await response.text();
+      result = JSON.parse(text);
+      console.log('Web3Forms response:', result);
+    } catch (parseError) {
+      console.error('Failed to parse Web3Forms response:', parseError);
+      return new Response(JSON.stringify({
+        success: false,
+        message: 'Failed to send message. Please try again or contact us directly at info@synetica.us'
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
     if (result.success) {
       return new Response(JSON.stringify({
@@ -225,9 +239,24 @@ async function handleCareersApplication(request, corsHeaders) {
       body: web3formsData
     });
 
-    const result = await response.json();
+    console.log('Web3Forms response status:', response.status);
 
-    console.log('Web3Forms response:', result);
+    // Handle non-JSON responses
+    let result;
+    try {
+      const text = await response.text();
+      result = JSON.parse(text);
+      console.log('Web3Forms response:', result);
+    } catch (parseError) {
+      console.error('Failed to parse Web3Forms response:', parseError);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Failed to submit application. Please try again or email your resume to careers@synetica.us'
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
     if (result.success) {
       return new Response(JSON.stringify({

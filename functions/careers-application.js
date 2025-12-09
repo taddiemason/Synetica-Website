@@ -90,9 +90,24 @@ export async function onRequestPost(context) {
       body: web3formsData
     });
 
-    const result = await response.json();
+    console.log('Web3Forms response status:', response.status);
 
-    console.log('Web3Forms response:', result);
+    // Handle non-JSON responses
+    let result;
+    try {
+      const text = await response.text();
+      result = JSON.parse(text);
+      console.log('Web3Forms response:', result);
+    } catch (parseError) {
+      console.error('Failed to parse Web3Forms response:', parseError);
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Failed to submit application. Please try again or email your resume to careers@synetica.us'
+      }), {
+        status: 500,
+        headers: corsHeaders
+      });
+    }
 
     if (result.success) {
       return new Response(JSON.stringify({
