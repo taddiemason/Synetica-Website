@@ -63,10 +63,12 @@ export async function onRequestPost({ request, env }) {
     let result;
     try {
       const text = await response.text();
+      console.log('Web3Forms raw response text:', text);
       result = JSON.parse(text);
-      console.log('Web3Forms response:', result);
+      console.log('Web3Forms parsed response:', result);
     } catch (parseError) {
       console.error('Failed to parse Web3Forms response:', parseError);
+      console.error('Response text that failed to parse:', text);
       return new Response(JSON.stringify({
         success: false,
         message: 'Failed to send message. Please try again or contact us directly at info@synetica.us'

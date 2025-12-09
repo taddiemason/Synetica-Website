@@ -96,10 +96,12 @@ export async function onRequestPost(context) {
     let result;
     try {
       const text = await response.text();
+      console.log('Web3Forms raw response text:', text);
       result = JSON.parse(text);
-      console.log('Web3Forms response:', result);
+      console.log('Web3Forms parsed response:', result);
     } catch (parseError) {
       console.error('Failed to parse Web3Forms response:', parseError);
+      console.error('Response text that failed to parse:', text);
       return new Response(JSON.stringify({
         success: false,
         error: 'Failed to submit application. Please try again or email your resume to careers@synetica.us'
