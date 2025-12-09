@@ -30,18 +30,18 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    // Prepare Web3Forms payload
-    const web3formsData = new FormData();
-    web3formsData.append('access_key', '96109e90-d006-4c97-9436-77ad8757b056');
-    web3formsData.append('name', name);
-    web3formsData.append('email', email);
-    web3formsData.append('phone', phone || 'Not provided');
-    web3formsData.append('company', company || 'Not provided');
-    web3formsData.append('message', message);
-    web3formsData.append('subject', `New Contact from ${name} - Synetica Website`);
-    web3formsData.append('from_name', 'Synetica Website');
-    web3formsData.append('to_email', 'info@synetica.us');
-    web3formsData.append('redirect', 'false');
+    // Prepare Web3Forms payload as JSON
+    const web3formsData = {
+      access_key: '96109e90-d006-4c97-9436-77ad8757b056',
+      name: name,
+      email: email,
+      phone: phone || 'Not provided',
+      company: company || 'Not provided',
+      message: message,
+      subject: `New Contact from ${name} - Synetica Website`,
+      from_name: 'Synetica Website',
+      redirect: false
+    };
 
     console.log('Sending to Web3Forms:', {
       name,
@@ -51,10 +51,14 @@ export async function onRequestPost({ request, env }) {
       message: message.substring(0, 50) + '...'
     });
 
-    // Send to Web3Forms API
+    // Send to Web3Forms API with proper headers
     const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      body: web3formsData
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(web3formsData)
     });
 
     console.log('Web3Forms response status:', response.status);
