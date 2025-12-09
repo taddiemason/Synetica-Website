@@ -30,36 +30,26 @@ export default {
       return handleCareersApplication(request, corsHeaders);
     }
 
-    // Serve static assets from the repository
+    // Serve static assets using Cloudflare Assets
     try {
-      // Fetch from GitHub repository
-      const githubUrl = `https://raw.githubusercontent.com/taddiemason/Synetica-Website/claude/synetica-msp-website-012TNubQC37JiDpKAZqpcmHL${path === '/' ? '/index.html' : path}`;
+      // Use the ASSETS binding to serve static files
+      const assetResponse = await env.ASSETS.fetch(request);
 
-      const response = await fetch(githubUrl);
+      // Clone the response so we can modify headers
+      const response = new Response(assetResponse.body, assetResponse);
 
-      if (!response.ok) {
-        return new Response('Not Found', { status: 404 });
-      }
-
-      // Determine content type
-      const contentType = getContentType(path);
-
-      // Create response with appropriate headers
-      const headers = new Headers(response.headers);
-      headers.set('Content-Type', contentType);
-      headers.set('Cache-Control', getCacheControl(path));
-
-      // Add CORS headers to static assets
+      // Add CORS headers to all responses
       Object.entries(corsHeaders).forEach(([key, value]) => {
-        headers.set(key, value);
+        response.headers.set(key, value);
       });
 
-      return new Response(response.body, {
-        status: response.status,
-        headers: headers
-      });
+      // Set cache control
+      response.headers.set('Cache-Control', getCacheControl(path));
+
+      return response;
     } catch (error) {
-      return new Response('Error loading resource', { status: 500 });
+      console.error('Error serving asset:', error);
+      return new Response('Not Found', { status: 404 });
     }
   }
 };
