@@ -101,6 +101,7 @@ const contactForm = document.getElementById('contactForm');
 if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        e.stopPropagation();
 
         const formData = new FormData(contactForm);
         const name = formData.get('name');
@@ -127,6 +128,25 @@ if (contactForm) {
         submitButton.disabled = true;
 
         try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification(data.message || 'Thank you! We will contact you soon.', 'success');
+                // Save scroll position before reset to prevent jump to top
+                const scrollPos = window.pageYOffset;
+                contactForm.reset();
+                window.scrollTo(0, scrollPos);
+            } else {
+                showNotification(data.message || 'Failed to send message. Please try again.', 'error');
+            }
+        } catch (error) {
+            console.error('Form submission error:', error);
+            showNotification('Failed to send message. Please try again.', 'error');
             await submitToWeb3Forms(formData);
         } finally {
             submitButton.textContent = originalText;
