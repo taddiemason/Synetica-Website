@@ -98,55 +98,59 @@ animateElements.forEach(el => {
 // ===========================
 const contactForm = document.getElementById('contactForm');
 
-contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const formData = new FormData(contactForm);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const message = formData.get('message');
+        const formData = new FormData(contactForm);
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const message = formData.get('message');
 
-    // Basic validation
-    if (!name || !email || !message) {
-        showNotification('Please fill in all required fields.', 'error');
-        return;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.match(emailRegex)) {
-        showNotification('Please enter a valid email address.', 'error');
-        return;
-    }
-
-    // Submit form
-    const submitButton = contactForm.querySelector('.btn');
-    const originalText = submitButton.textContent;
-    submitButton.textContent = 'Sending...';
-    submitButton.disabled = true;
-
-    try {
-        const response = await fetch('/api/contact', {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            showNotification(data.message || 'Thank you! We will contact you soon.', 'success');
-            contactForm.reset();
-        } else {
-            showNotification(data.message || 'Failed to send message. Please try again.', 'error');
+        // Basic validation
+        if (!name || !email || !message) {
+            showNotification('Please fill in all required fields.', 'error');
+            return;
         }
-    } catch (error) {
-        console.error('Form submission error:', error);
-        showNotification('Failed to send message. Please try again.', 'error');
-    } finally {
-        submitButton.textContent = originalText;
-        submitButton.disabled = false;
-    }
-});
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.match(emailRegex)) {
+            showNotification('Please enter a valid email address.', 'error');
+            return;
+        }
+
+        // Submit form
+        const submitButton = contactForm.querySelector('.btn');
+        const originalText = submitButton.textContent;
+        submitButton.textContent = 'Sending...';
+        submitButton.disabled = true;
+
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showNotification(data.message || 'Thank you! We will contact you soon.', 'success');
+                contactForm.reset();
+            } else {
+                showNotification(data.message || 'Failed to send message. Please try again.', 'error');
+            }
+        } catch (error) {
+            console.error('Form submission error:', error);
+            showNotification('Failed to send message. Please try again.', 'error');
+        } finally {
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        }
+    });
+} else {
+    console.error('Contact form not found - form submission will not work');
+}
 
 // ===========================
 // Notification System
