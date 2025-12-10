@@ -67,7 +67,6 @@ async function handleContactForm(request, corsHeaders) {
     const phone = formData.get('phone');
     const company = formData.get('company');
     const message = formData.get('message');
-    const botcheck = formData.get('botcheck');
 
     // Validate required fields
     if (!name || !email || !message) {
@@ -80,60 +79,29 @@ async function handleContactForm(request, corsHeaders) {
       });
     }
 
-    // Prepare Web3Forms payload as JSON
-    const web3formsData = {
+    // Build simple payload for Web3Forms
+    const payload = {
       access_key: '96109e90-d006-4c97-9436-77ad8757b056',
       name: name,
       email: email,
-      message: message,
-      subject: `New Contact from ${name} - Synetica Website`,
-      from_name: 'Synetica Website'
+      message: message
     };
 
-    // Add optional fields only if they have values
-    if (phone) web3formsData.phone = phone;
-    if (company) web3formsData.company = company;
-    if (botcheck) web3formsData.botcheck = botcheck;
+    // Add optional fields if provided
+    if (phone) payload.phone = phone;
+    if (company) payload.company = company;
 
-    console.log('Sending to Web3Forms:', {
-      name,
-      email,
-      phone: phone || 'Not provided',
-      company: company || 'Not provided',
-      message: message.substring(0, 50) + '...'
-    });
-
-    // Send to Web3Forms API with proper headers
+    // Send to Web3Forms
     const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify(web3formsData)
+      body: JSON.stringify(payload)
     });
 
-    console.log('Web3Forms response status:', response.status);
-
-    // Handle non-JSON responses
-    let result;
-    let text;
-    try {
-      text = await response.text();
-      console.log('Web3Forms raw response text:', text);
-      result = JSON.parse(text);
-      console.log('Web3Forms parsed response:', result);
-    } catch (parseError) {
-      console.error('Failed to parse Web3Forms response:', parseError);
-      console.error('Response text that failed to parse:', text);
-      return new Response(JSON.stringify({
-        success: false,
-        message: 'Failed to send message. Please try again or contact us directly at info@synetica.us'
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
+    const result = await response.json();
 
     if (result.success) {
       return new Response(JSON.stringify({
@@ -144,15 +112,11 @@ async function handleContactForm(request, corsHeaders) {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     } else {
-      console.error('Web3Forms error:', {
-        status: response.status,
-        result: result
-      });
       return new Response(JSON.stringify({
         success: false,
-        message: `Error: ${result.message || 'Failed to send message. Please try again.'}`
+        message: result.message || 'Failed to send message. Please try again.'
       }), {
-        status: 500,
+        status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -161,7 +125,7 @@ async function handleContactForm(request, corsHeaders) {
     console.error('Form submission error:', error);
     return new Response(JSON.stringify({
       success: false,
-      message: `Error: ${error.message}`
+      message: 'Failed to send message. Please try again.'
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
