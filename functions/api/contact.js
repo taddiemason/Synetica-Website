@@ -36,14 +36,15 @@ export async function onRequestPost({ request, env }) {
       access_key: '96109e90-d006-4c97-9436-77ad8757b056',
       name: name,
       email: email,
-      phone: phone || '',
-      company: company || '',
       message: message,
       subject: `New Contact from ${name} - Synetica Website`,
-      from_name: 'Synetica Website',
-      botcheck: botcheck || false,
-      redirect: false
+      from_name: 'Synetica Website'
     };
+
+    // Add optional fields only if they have values
+    if (phone) web3formsData.phone = phone;
+    if (company) web3formsData.company = company;
+    if (botcheck) web3formsData.botcheck = botcheck;
 
     console.log('Sending to Web3Forms:', {
       name,
