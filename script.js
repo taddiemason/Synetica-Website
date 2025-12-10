@@ -101,6 +101,7 @@ const contactForm = document.getElementById('contactForm');
 if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        e.stopPropagation();
 
         const formData = new FormData(contactForm);
         const name = formData.get('name');
@@ -136,7 +137,10 @@ if (contactForm) {
 
             if (data.success) {
                 showNotification(data.message || 'Thank you! We will contact you soon.', 'success');
+                // Save scroll position before reset to prevent jump to top
+                const scrollPos = window.pageYOffset;
                 contactForm.reset();
+                window.scrollTo(0, scrollPos);
             } else {
                 showNotification(data.message || 'Failed to send message. Please try again.', 'error');
             }
