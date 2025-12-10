@@ -98,46 +98,82 @@ animateElements.forEach(el => {
 // ===========================
 const contactForm = document.getElementById('contactForm');
 
-contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const formData = new FormData(contactForm);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const message = formData.get('message');
+        const formData = new FormData(contactForm);
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const message = formData.get('message');
 
-    // Basic validation
-    if (!name || !email || !message) {
-        showNotification('Please fill in all required fields.', 'error');
-        return;
-    }
+        // Basic validation
+        if (!name || !email || !message) {
+            showNotification('Please fill in all required fields.', 'error');
+            return;
+        }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.match(emailRegex)) {
-        showNotification('Please enter a valid email address.', 'error');
-        return;
-    }
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.match(emailRegex)) {
+            showNotification('Please enter a valid email address.', 'error');
+            return;
+        }
 
-    // Submit form
-    const submitButton = contactForm.querySelector('.btn');
-    const originalText = submitButton.textContent;
-    submitButton.textContent = 'Sending...';
-    submitButton.disabled = true;
+        // Submit form
+        const submitButton = contactForm.querySelector('.btn');
+        const originalText = submitButton.textContent;
+        submitButton.textContent = 'Sending...';
+        submitButton.disabled = true;
+
+        try {
+            await submitToWeb3Forms(formData);
+        } finally {
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        }
+    });
+}
+
+async function submitToWeb3Forms(formData) {
+    // Build payload expected by Web3Forms API
+    const payload = {
+        access_key: '96109e90-d006-4c97-9436-77ad8757b056',
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone') || '',
+        company: formData.get('company') || '',
+        message: formData.get('message'),
+        subject: `New Contact from ${formData.get('name')} - Synetica Website`,
+        from_name: 'Synetica Website',
+        botcheck: formData.get('botcheck') || false,
+        redirect: false
+    };
 
     try {
+        const response = await fetch('https://api.web3forms.com/submit', {
         // First try the site API (handled by the worker/Pages Function)
         const response = await fetch('/api/contact', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
         });
 
-        const data = await response.json();
+        const result = await response.json();
 
-        if (data.success) {
-            showNotification(data.message || 'Thank you! We will contact you soon.', 'success');
+        if (result.success) {
+            showNotification('Thank you! Your message has been sent successfully.', 'success');
             contactForm.reset();
         } else {
+            console.error('Web3Forms error:', result);
+            showNotification(result.message || 'Failed to send message. Please try again.', 'error');
+        }
+    } catch (fallbackError) {
+        console.error('Web3Forms submission failed:', fallbackError);
+        showNotification('Failed to send message. Please try again.', 'error');
             console.warn('Site API reported failure, falling back to Web3Forms:', data);
             await submitToWeb3Forms(formData);
         }
@@ -148,7 +184,7 @@ contactForm.addEventListener('submit', async (e) => {
         submitButton.textContent = originalText;
         submitButton.disabled = false;
     }
-});
+}
 
 async function submitToWeb3Forms(formData) {
     // Build payload expected by Web3Forms API
