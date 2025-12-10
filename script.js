@@ -126,27 +126,52 @@ contactForm.addEventListener('submit', async (e) => {
     submitButton.disabled = true;
 
     try {
-        const response = await fetch('/api/contact', {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            showNotification(data.message || 'Thank you! We will contact you soon.', 'success');
-            contactForm.reset();
-        } else {
-            showNotification(data.message || 'Failed to send message. Please try again.', 'error');
-        }
-    } catch (error) {
-        console.error('Form submission error:', error);
-        showNotification('Failed to send message. Please try again.', 'error');
+        await submitToWeb3Forms(formData);
     } finally {
         submitButton.textContent = originalText;
         submitButton.disabled = false;
     }
 });
+
+async function submitToWeb3Forms(formData) {
+    // Build payload expected by Web3Forms API
+    const payload = {
+        access_key: '96109e90-d006-4c97-9436-77ad8757b056',
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone') || '',
+        company: formData.get('company') || '',
+        message: formData.get('message'),
+        subject: `New Contact from ${formData.get('name')} - Synetica Website`,
+        from_name: 'Synetica Website',
+        botcheck: formData.get('botcheck') || false,
+        redirect: false
+    };
+
+    try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            showNotification('Thank you! Your message has been sent successfully.', 'success');
+            contactForm.reset();
+        } else {
+            console.error('Web3Forms error:', result);
+            showNotification(result.message || 'Failed to send message. Please try again.', 'error');
+        }
+    } catch (fallbackError) {
+        console.error('Web3Forms submission failed:', fallbackError);
+        showNotification('Failed to send message. Please try again.', 'error');
+    }
+}
 
 // ===========================
 // Notification System
