@@ -11,3 +11,6 @@ not_found_handling = "404-page"
 
 [observability]
 enabled = true
+
+[[send_email]]
+name = "EMAIL"

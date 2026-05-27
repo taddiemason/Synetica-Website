@@ -544,51 +544,16 @@ if (contactForm) {
                 contactForm.reset();
                 window.scrollTo(0, scrollPos);
             } else {
-                showNotification(data.message || 'Transmission failed. Trying backup channel...', 'error');
-                await submitToWeb3Forms(formData);
+                showNotification(data.message || 'Transmission failed. Please try again.', 'error');
             }
         } catch (error) {
-            await submitToWeb3Forms(formData);
+            showNotification('Connection error. Please try again or call us directly.', 'error');
         } finally {
             setButtonText(originalText);
             submitButton.disabled = false;
         }
     });
 }
-
-async function submitToWeb3Forms(formData) {
-    const payload = {
-        access_key: '96109e90-d006-4c97-9436-77ad8757b056',
-        name: formData.get('name'),
-        email: formData.get('email'),
-        phone: formData.get('phone') || '',
-        company: formData.get('company') || '',
-        message: formData.get('message'),
-        subject: `New Contact from ${formData.get('name')} - Synetica Website`,
-        from_name: 'Synetica Website',
-        botcheck: false,
-        redirect: false,
-    };
-
-    try {
-        const response = await fetch('https://api.web3forms.com/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify(payload),
-        });
-        const result = await response.json();
-
-        if (result.success) {
-            showNotification('Message transmitted successfully. We will contact you soon.', 'success');
-            if (contactForm) contactForm.reset();
-        } else {
-            showNotification(result.message || 'Transmission failed. Please try again.', 'error');
-        }
-    } catch {
-        showNotification('Connection error. Please try again or call us directly.', 'error');
-    }
-}
-
 
 // ===========================
 // Notification System
