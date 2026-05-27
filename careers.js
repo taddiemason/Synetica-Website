@@ -84,8 +84,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Submit form
             const submitButton = careersForm.querySelector('.btn');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Submitting...';
+            const btnInner = submitButton.querySelector('.btn-inner');
+            const originalText = btnInner ? btnInner.textContent : submitButton.textContent;
+
+            const setButtonText = (text) => {
+                if (btnInner) btnInner.textContent = text;
+                else submitButton.textContent = text;
+            };
+
+            setButtonText('Submitting...');
             submitButton.disabled = true;
 
             try {
@@ -106,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Form submission error:', error);
                 showNotification('Failed to submit application. Please email your resume to careers@synetica.us', 'error');
             } finally {
-                submitButton.textContent = originalText;
+                setButtonText(originalText);
                 submitButton.disabled = false;
             }
         });

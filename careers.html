@@ -7,9 +7,16 @@
     <meta name="keywords" content="Buffalo IT jobs, Western New York IT careers, MSP jobs Buffalo, IT technician jobs Buffalo NY, cybersecurity jobs Buffalo">
     <title>Careers at Synetica | Buffalo IT Jobs | Western New York MSP</title>
     <link rel="icon" type="image/png" href="images/Synetica Logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
@@ -28,28 +35,48 @@
                 <li><a href="index.html#services" class="nav-link">Services</a></li>
                 <li><a href="index.html#about" class="nav-link">About</a></li>
                 <li><a href="careers.html" class="nav-link active">Careers</a></li>
-                <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                <li><a href="index.html#contact" class="nav-link nav-link-cta">Contact</a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero careers-hero">
-        <div class="hero-overlay"></div>
+        <canvas id="hero-canvas"></canvas>
+        <div class="scan-lines"></div>
+        <div class="hero-grid"></div>
+        <div class="hud-corner hud-tl"><div class="hud-line hud-h"></div><div class="hud-line hud-v"></div></div>
+        <div class="hud-corner hud-tr"><div class="hud-line hud-h"></div><div class="hud-line hud-v"></div></div>
+        <div class="hud-corner hud-bl"><div class="hud-line hud-h"></div><div class="hud-line hud-v"></div></div>
+        <div class="hud-corner hud-br"><div class="hud-line hud-h"></div><div class="hud-line hud-v"></div></div>
+        <div class="hero-status">
+            <span class="status-dot"></span>
+            <span class="status-text">POSITIONS AVAILABLE</span>
+        </div>
         <div class="container hero-content">
-            <h1 class="hero-title animate-fade-in">Join Our Team</h1>
-            <p class="hero-subtitle animate-fade-in-delay">Build your career with Buffalo's leading MSP. We're looking for passionate IT professionals to help us deliver exceptional service to Western New York businesses.</p>
+            <div class="hero-label">/ JOIN SYNETICA /</div>
+            <h1 class="hero-title">Join Our Team</h1>
+            <p class="hero-subtitle">Build your career with Buffalo's leading MSP. We're looking for passionate IT professionals to help us deliver exceptional service to Western New York businesses.</p>
+            <div class="hero-cta">
+                <a href="#apply" class="btn btn-primary"><span class="btn-inner">Apply Now</span><span class="btn-glow"></span></a>
+                <a href="#positions" class="btn btn-secondary"><span class="btn-inner">View Positions</span></a>
+            </div>
         </div>
         <div class="scroll-indicator">
-            <span></span>
+            <div class="scroll-track"><div class="scroll-thumb"></div></div>
+            <span class="scroll-label">SCROLL</span>
         </div>
     </section>
 
     <!-- Why Work Here Section -->
     <section class="why-work-here">
+        <div class="section-bg-grid"></div>
         <div class="container">
-            <h2 class="section-title">Why Work at Synetica?</h2>
-            <p class="section-subtitle">We invest in our team because they're our greatest asset</p>
+            <div class="section-header">
+                <div class="section-label">/ BENEFITS /</div>
+                <h2 class="section-title">Why Work at Synetica?</h2>
+                <p class="section-subtitle">We invest in our team because they're our greatest asset</p>
+            </div>
 
             <div class="benefits-grid">
                 <div class="benefit-card">
@@ -122,10 +149,14 @@
     </section>
 
     <!-- Open Positions Section -->
-    <section class="open-positions">
+    <section class="open-positions" id="positions">
+        <div class="section-bg-circuit"></div>
         <div class="container">
-            <h2 class="section-title">Open Positions</h2>
-            <p class="section-subtitle">Find your next opportunity in Buffalo, NY</p>
+            <div class="section-header">
+                <div class="section-label">/ OPEN POSITIONS /</div>
+                <h2 class="section-title">Open Positions</h2>
+                <p class="section-subtitle">Find your next opportunity in Buffalo, NY</p>
+            </div>
 
             <div class="jobs-list">
                 <div class="job-card">
@@ -230,8 +261,11 @@
     <!-- Application Form Section -->
     <section class="application-form" id="apply">
         <div class="container">
-            <h2 class="section-title">Apply Now</h2>
-            <p class="section-subtitle">Submit your application and join the Synetica team</p>
+            <div class="section-header">
+                <div class="section-label">/ APPLICATION /</div>
+                <h2 class="section-title">Apply Now</h2>
+                <p class="section-subtitle">Submit your application and join the Synetica team</p>
+            </div>
 
             <form class="careers-form" id="careersForm">
                 <div class="form-row">
@@ -296,19 +330,20 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Submit Application</button>
+                <button type="submit" class="btn btn-primary"><span class="btn-inner">Submit Application</span><span class="btn-glow"></span></button>
             </form>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
+        <div class="footer-top-line"></div>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>SYNETICA</h3>
                     <p>Buffalo's trusted MSP for comprehensive IT solutions and managed services in Western New York.</p>
-                    <p style="margin-top: 10px; font-size: 0.9em;">📍 219 Lexington Ave, Buffalo, NY 14222</p>
+                    <p class="footer-address">&#x25CF; 219 Lexington Ave, Buffalo, NY 14222</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>

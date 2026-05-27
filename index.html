@@ -10,6 +10,9 @@
     <meta name="geo.position" content="42.886447;-78.878369">
     <title>Buffalo MSP & IT Services | Synetica | Western New York Managed IT Provider</title>
     <link rel="icon" type="image/png" href="images/Synetica Logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script type="application/ld+json">
     {
@@ -36,13 +39,7 @@
       },
       "openingHoursSpecification": {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday"
-        ],
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
         "opens": "09:00",
         "closes": "17:00"
       },
@@ -69,6 +66,28 @@
     </script>
 </head>
 <body>
+
+    <!-- Boot Sequence Overlay -->
+    <div id="boot-sequence" class="boot-sequence">
+        <div class="boot-content">
+            <div class="boot-logo">S Y N E T I C A</div>
+            <div class="boot-tagline">MANAGED IT SYSTEMS — BUFFALO, NY</div>
+            <div class="boot-lines">
+                <div class="boot-line" data-delay="0">&#x25B6; INITIALIZING NEURAL INTERFACE...</div>
+                <div class="boot-line" data-delay="400">&#x25B6; LOADING SECURITY PROTOCOLS...</div>
+                <div class="boot-line" data-delay="800">&#x25B6; ESTABLISHING SECURE LINK...</div>
+                <div class="boot-line boot-ready" data-delay="1200">&#x25CF; SYSTEM ONLINE</div>
+            </div>
+            <div class="boot-bar-wrap">
+                <div class="boot-bar"><div class="boot-progress"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
@@ -87,35 +106,98 @@
                 <li><a href="#services" class="nav-link">Services</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="careers.html" class="nav-link">Careers</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
+                <li><a href="#contact" class="nav-link nav-link-cta">Contact</a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
-        <div class="hero-overlay"></div>
+        <canvas id="hero-canvas"></canvas>
+        <div class="scan-lines"></div>
+        <div class="hero-grid"></div>
+
+        <div class="hud-corner hud-tl">
+            <div class="hud-line hud-h"></div>
+            <div class="hud-line hud-v"></div>
+        </div>
+        <div class="hud-corner hud-tr">
+            <div class="hud-line hud-h"></div>
+            <div class="hud-line hud-v"></div>
+        </div>
+        <div class="hud-corner hud-bl">
+            <div class="hud-line hud-h"></div>
+            <div class="hud-line hud-v"></div>
+        </div>
+        <div class="hud-corner hud-br">
+            <div class="hud-line hud-h"></div>
+            <div class="hud-line hud-v"></div>
+        </div>
+
+        <div class="hero-status">
+            <span class="status-dot"></span>
+            <span class="status-text">SYN-NET ACTIVE</span>
+        </div>
+
+        <div class="hero-data-readout">
+            <span class="data-item">LAT: 42.8864°N</span>
+            <span class="data-item">LON: 78.8784°W</span>
+            <span class="data-item">BUFFALO, NY</span>
+        </div>
+
         <div class="container hero-content">
-            <h1 class="hero-title animate-fade-in">Buffalo's Leading MSP for Intelligent IT Solutions</h1>
-            <p class="hero-subtitle animate-fade-in-delay">Comprehensive managed IT services, cybersecurity, and cloud solutions for Western New York businesses.</p>
-            <div class="hero-cta animate-fade-in-delay-2">
-                <a href="#contact" class="btn btn-primary">Get Started</a>
-                <a href="#services" class="btn btn-secondary">Our Services</a>
+            <div class="hero-label">NEXT-GEN MANAGED IT</div>
+            <h1 class="hero-title" data-glitch="Buffalo's Leading MSP for Intelligent IT Solutions">Buffalo's Leading MSP for Intelligent IT Solutions</h1>
+            <p class="hero-subtitle">Comprehensive managed IT services, cybersecurity, and cloud solutions for Western New York businesses.</p>
+            <div class="hero-cta">
+                <a href="#contact" class="btn btn-primary">
+                    <span class="btn-inner">Initialize Contact</span>
+                    <span class="btn-glow"></span>
+                </a>
+                <a href="#services" class="btn btn-secondary">
+                    <span class="btn-inner">Explore Systems</span>
+                </a>
+            </div>
+            <div class="hero-metrics">
+                <div class="hero-metric">
+                    <span class="metric-val">99.9%</span>
+                    <span class="metric-label">Uptime</span>
+                </div>
+                <div class="hero-metric-divider"></div>
+                <div class="hero-metric">
+                    <span class="metric-val">24/7</span>
+                    <span class="metric-label">Support</span>
+                </div>
+                <div class="hero-metric-divider"></div>
+                <div class="hero-metric">
+                    <span class="metric-val">100%</span>
+                    <span class="metric-label">Managed</span>
+                </div>
             </div>
         </div>
+
         <div class="scroll-indicator">
-            <span></span>
+            <div class="scroll-track">
+                <div class="scroll-thumb"></div>
+            </div>
+            <span class="scroll-label">SCROLL</span>
         </div>
     </section>
 
     <!-- Services Section -->
     <section class="services" id="services">
+        <div class="section-bg-grid"></div>
         <div class="container">
-            <h2 class="section-title">Buffalo IT Services</h2>
-            <p class="section-subtitle">Comprehensive IT solutions designed to drive Western New York businesses forward</p>
+            <div class="section-header">
+                <div class="section-label">/ CORE SYSTEMS /</div>
+                <h2 class="section-title" data-glitch="Buffalo IT Services">Buffalo IT Services</h2>
+                <p class="section-subtitle">Comprehensive IT solutions designed to drive Western New York businesses forward</p>
+            </div>
 
             <div class="services-grid">
-                <div class="service-card">
+
+                <div class="service-card holo-card" data-tilt>
+                    <div class="holo-shimmer"></div>
                     <div class="service-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
@@ -124,9 +206,11 @@
                     </div>
                     <h3>Managed IT Services</h3>
                     <p>24/7 monitoring, maintenance, and support for your entire IT infrastructure. We keep your systems running smoothly so you can focus on your business.</p>
+                    <div class="card-corner card-corner-br"></div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card holo-card" data-tilt>
+                    <div class="holo-shimmer"></div>
                     <div class="service-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -134,9 +218,11 @@
                     </div>
                     <h3>Cybersecurity</h3>
                     <p>Advanced threat protection, security audits, and compliance management. Safeguard your data and protect your business from evolving cyber threats.</p>
+                    <div class="card-corner card-corner-br"></div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card holo-card" data-tilt>
+                    <div class="holo-shimmer"></div>
                     <div class="service-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
@@ -144,9 +230,11 @@
                     </div>
                     <h3>Cloud Solutions</h3>
                     <p>Seamless cloud migration, management, and optimization. Leverage the power of cloud computing for scalability and efficiency.</p>
+                    <div class="card-corner card-corner-br"></div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card holo-card" data-tilt>
+                    <div class="holo-shimmer"></div>
                     <div class="service-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
@@ -154,9 +242,11 @@
                     </div>
                     <h3>Network Infrastructure</h3>
                     <p>Design, implementation, and management of robust network solutions. Ensure reliable connectivity and optimal performance.</p>
+                    <div class="card-corner card-corner-br"></div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card holo-card" data-tilt>
+                    <div class="holo-shimmer"></div>
                     <div class="service-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -166,9 +256,11 @@
                     </div>
                     <h3>Backup & Disaster Recovery</h3>
                     <p>Comprehensive data protection and business continuity planning. Ensure your critical data is always safe and recoverable.</p>
+                    <div class="card-corner card-corner-br"></div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card holo-card" data-tilt>
+                    <div class="holo-shimmer"></div>
                     <div class="service-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -179,9 +271,11 @@
                     </div>
                     <h3>IT Consulting</h3>
                     <p>Strategic technology planning and digital transformation guidance. Align your IT investments with business objectives.</p>
+                    <div class="card-corner card-corner-br"></div>
                 </div>
 
-                <div class="service-card">
+                <div class="service-card holo-card" data-tilt>
+                    <div class="holo-shimmer"></div>
                     <div class="service-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -193,7 +287,9 @@
                     </div>
                     <h3>Web Design</h3>
                     <p>Professional website design and development services. Create a powerful online presence with modern, responsive websites tailored to your brand.</p>
+                    <div class="card-corner card-corner-br"></div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -203,31 +299,46 @@
         <div class="container">
             <div class="about-content">
                 <div class="about-text">
-                    <h2 class="section-title">Western New York's Trusted MSP</h2>
+                    <div class="section-label">/ ABOUT SYNETICA /</div>
+                    <h2 class="section-title" data-glitch="Western New York's Trusted MSP">Western New York's Trusted MSP</h2>
                     <p>Synetica is Buffalo's leading managed service provider dedicated to delivering innovative IT solutions that empower Western New York businesses to thrive in the digital age. Proudly serving Buffalo, NY and surrounding areas, our team of certified professionals provides comprehensive technology services that drive efficiency, security, and growth.</p>
                     <p>As your local Buffalo IT partner, we're committed to understanding the unique challenges of Western New York businesses and delivering solutions that make a real difference. Our mission is to be more than just your MSP—we're your technology partner.</p>
                     <div class="about-stats">
-                        <div class="stat">
-                            <h3>100%</h3>
+                        <div class="stat holo-card">
+                            <h3 class="stat-counter" data-target="100" data-suffix="%">0%</h3>
                             <p>Managed IT Solutions</p>
                         </div>
-                        <div class="stat">
-                            <h3>24/7</h3>
+                        <div class="stat holo-card">
+                            <h3 class="stat-display">24/7</h3>
                             <p>Expert Support</p>
                         </div>
-                        <div class="stat">
-                            <h3>99.9%</h3>
+                        <div class="stat holo-card">
+                            <h3 class="stat-counter" data-target="99.9" data-suffix="%" data-decimal="1">0%</h3>
                             <p>Uptime Guarantee</p>
                         </div>
                     </div>
                 </div>
                 <div class="about-image">
-                    <div class="image-placeholder">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                            <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
+                    <div class="about-holo-display">
+                        <div class="holo-display-inner">
+                            <div class="holo-ring holo-ring-1"></div>
+                            <div class="holo-ring holo-ring-2"></div>
+                            <div class="holo-ring holo-ring-3"></div>
+                            <div class="holo-core">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                                </svg>
+                            </div>
+                            <div class="holo-scan-line"></div>
+                        </div>
+                        <div class="holo-data">
+                            <div class="holo-data-line">SYN-CORE v4.2.1</div>
+                            <div class="holo-data-line">UPTIME: 99.9%</div>
+                            <div class="holo-data-line">THREAT LVL: MINIMAL</div>
+                            <div class="holo-data-line blink">&#x25A0; ALL SYSTEMS NOMINAL</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -236,30 +347,38 @@
 
     <!-- Why Choose Us Section -->
     <section class="why-us" id="why-us">
+        <div class="section-bg-circuit"></div>
         <div class="container">
-            <h2 class="section-title">Why Choose Synetica?</h2>
-            <p class="section-subtitle">The benefits of partnering with us</p>
+            <div class="section-header">
+                <div class="section-label">/ ADVANTAGES /</div>
+                <h2 class="section-title" data-glitch="Why Choose Synetica?">Why Choose Synetica?</h2>
+                <p class="section-subtitle">The benefits of partnering with us</p>
+            </div>
 
             <div class="features-grid">
-                <div class="feature">
+                <div class="feature holo-card" data-tilt>
                     <div class="feature-number">01</div>
                     <h3>Expert Team</h3>
                     <p>Our certified professionals bring decades of combined experience across all major technology platforms.</p>
+                    <div class="feature-accent"></div>
                 </div>
-                <div class="feature">
+                <div class="feature holo-card" data-tilt>
                     <div class="feature-number">02</div>
                     <h3>Proactive Approach</h3>
                     <p>We identify and resolve issues before they impact your business, ensuring maximum uptime.</p>
+                    <div class="feature-accent"></div>
                 </div>
-                <div class="feature">
+                <div class="feature holo-card" data-tilt>
                     <div class="feature-number">03</div>
                     <h3>Scalable Solutions</h3>
                     <p>Our services grow with your business, providing flexibility and adaptability as your needs evolve.</p>
+                    <div class="feature-accent"></div>
                 </div>
-                <div class="feature">
+                <div class="feature holo-card" data-tilt>
                     <div class="feature-number">04</div>
                     <h3>Transparent Pricing</h3>
                     <p>Clear, predictable pricing with no hidden fees. Know exactly what you're paying for.</p>
+                    <div class="feature-accent"></div>
                 </div>
             </div>
         </div>
@@ -268,12 +387,15 @@
     <!-- Contact Section -->
     <section class="contact" id="contact">
         <div class="container">
-            <h2 class="section-title">Get In Touch</h2>
-            <p class="section-subtitle">Ready to transform your IT infrastructure? Let's talk.</p>
+            <div class="section-header">
+                <div class="section-label">/ ESTABLISH LINK /</div>
+                <h2 class="section-title" data-glitch="Get In Touch">Get In Touch</h2>
+                <p class="section-subtitle">Ready to transform your IT infrastructure? Let's talk.</p>
+            </div>
 
             <div class="contact-content">
                 <div class="contact-info">
-                    <div class="contact-item">
+                    <div class="contact-item holo-card">
                         <div class="contact-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -285,7 +407,7 @@
                             <p>219 Lexington Ave<br>Buffalo, NY 14222</p>
                         </div>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-item holo-card">
                         <div class="contact-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
@@ -296,7 +418,7 @@
                             <p>(716) 341-3678</p>
                         </div>
                     </div>
-                    <div class="contact-item">
+                    <div class="contact-item holo-card">
                         <div class="contact-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -310,23 +432,36 @@
                     </div>
                 </div>
 
-                <form class="contact-form" id="contactForm" action="#contact">
+                <form class="contact-form holo-card" id="contactForm" action="#contact">
                     <div class="form-group">
-                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="John Smith" required>
+                        <div class="input-glow"></div>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" placeholder="john@company.com" required>
+                        <div class="input-glow"></div>
                     </div>
                     <div class="form-group">
-                        <input type="tel" id="phone" name="phone" placeholder="Your Phone">
+                        <label for="phone">Phone (Optional)</label>
+                        <input type="tel" id="phone" name="phone" placeholder="(716) 000-0000">
+                        <div class="input-glow"></div>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="company" name="company" placeholder="Company (Optional)">
+                        <label for="company">Company (Optional)</label>
+                        <input type="text" id="company" name="company" placeholder="Company Name">
+                        <div class="input-glow"></div>
                     </div>
                     <div class="form-group">
-                        <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
+                        <label for="message">Your Message</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Tell us about your IT needs..." required></textarea>
+                        <div class="input-glow"></div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Send Message</button>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <span class="btn-inner">Transmit Message</span>
+                        <span class="btn-glow"></span>
+                    </button>
                 </form>
             </div>
         </div>
@@ -334,12 +469,13 @@
 
     <!-- Footer -->
     <footer class="footer">
+        <div class="footer-top-line"></div>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>SYNETICA</h3>
                     <p>Buffalo's trusted MSP for comprehensive IT solutions and managed services in Western New York.</p>
-                    <p style="margin-top: 10px; font-size: 0.9em;">📍 219 Lexington Ave, Buffalo, NY 14222</p>
+                    <p class="footer-address">&#x25CF; 219 Lexington Ave, Buffalo, NY 14222</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
@@ -378,7 +514,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Synetica - Buffalo MSP | Managed IT Services for Western New York | All rights reserved.</p>
+                <p>&copy; 2024 Synetica — Buffalo MSP | Managed IT Services for Western New York | All rights reserved.</p>
             </div>
         </div>
     </footer>
