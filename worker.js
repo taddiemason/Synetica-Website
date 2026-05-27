@@ -1,5 +1,3 @@
-import { EmailMessage } from "cloudflare:email";
-
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -44,9 +42,9 @@ async function handleContactForm(request, env, corsHeaders) {
   try {
     const formData = await request.formData();
 
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const phone = formData.get('phone');
+    const name    = formData.get('name');
+    const email   = formData.get('email');
+    const phone   = formData.get('phone');
     const company = formData.get('company');
     const message = formData.get('message');
 
@@ -64,16 +62,13 @@ async function handleContactForm(request, env, corsHeaders) {
       message,
     ].filter(l => l !== null);
 
-    const raw = buildEmail({
-      from:    'noreply@synetica.us',
-      to:      'info@synetica.us',
-      replyTo: `${name} <${email}>`,
-      subject: `New Contact: ${name} — Synetica Website`,
-      body:    bodyLines.join('\n'),
+    await sendEmail(env, {
+      from:     'noreply@synetica.us',
+      to:       'info@synetica.us',
+      replyTo:  email,
+      subject:  `New Contact: ${name} — Synetica Website`,
+      text:     bodyLines.join('\n'),
     });
-
-    const msg = new EmailMessage('noreply@synetica.us', 'info@synetica.us', raw);
-    await env.EMAIL.send(msg);
 
     return jsonResponse({ success: true, message: 'Thank you! Your message has been sent successfully.' }, 200, corsHeaders);
 
@@ -122,23 +117,19 @@ async function handleCareersApplication(request, env, corsHeaders) {
     ];
 
     const resumeBuffer = await resume.arrayBuffer();
-    const resumeBase64 = wrapBase64(Buffer.from(resumeBuffer).toString('base64'));
+    const resumeBase64 = Buffer.from(resumeBuffer).toString('base64');
 
-    const raw = buildEmailWithAttachment({
-      from:        'noreply@synetica.us',
-      to:          'careers@synetica.us',
-      replyTo:     `${firstName} ${lastName} <${email}>`,
-      subject:     `New Job Application: ${position} — ${firstName} ${lastName}`,
-      body:        bodyLines.join('\n'),
-      attachment: {
-        filename:    resume.name,
-        contentType: resume.type || 'application/octet-stream',
-        base64:      resumeBase64,
-      },
+    await sendEmail(env, {
+      from:     'noreply@synetica.us',
+      to:       'careers@synetica.us',
+      replyTo:  email,
+      subject:  `New Job Application: ${position} — ${firstName} ${lastName}`,
+      text:     bodyLines.join('\n'),
+      attachments: [{
+        filename: resume.name,
+        content:  resumeBase64,
+      }],
     });
-
-    const msg = new EmailMessage('noreply@synetica.us', 'careers@synetica.us', raw);
-    await env.EMAIL.send(msg);
 
     return jsonResponse({
       success: true,
@@ -154,48 +145,25 @@ async function handleCareersApplication(request, env, corsHeaders) {
   }
 }
 
-function buildEmail({ from, to, replyTo, subject, body }) {
-  return [
-    `From: Synetica <${from}>`,
-    `To: ${to}`,
-    `Reply-To: ${replyTo}`,
-    `Subject: ${subject}`,
-    `MIME-Version: 1.0`,
-    `Content-Type: text/plain; charset=utf-8`,
-    ``,
-    body,
-  ].join('\r\n');
-}
+async function sendEmail(env, { from, to, replyTo, subject, text, attachments }) {
+  const payload = { from, to, reply_to: replyTo, subject, text };
+  if (attachments) payload.attachments = attachments;
 
-function buildEmailWithAttachment({ from, to, replyTo, subject, body, attachment }) {
-  const boundary = `----=_Part_${Date.now()}`;
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
 
-  return [
-    `From: Synetica Careers <${from}>`,
-    `To: ${to}`,
-    `Reply-To: ${replyTo}`,
-    `Subject: ${subject}`,
-    `MIME-Version: 1.0`,
-    `Content-Type: multipart/mixed; boundary="${boundary}"`,
-    ``,
-    `--${boundary}`,
-    `Content-Type: text/plain; charset=utf-8`,
-    `Content-Transfer-Encoding: 7bit`,
-    ``,
-    body,
-    ``,
-    `--${boundary}`,
-    `Content-Type: ${attachment.contentType}`,
-    `Content-Disposition: attachment; filename="${attachment.filename}"`,
-    `Content-Transfer-Encoding: base64`,
-    ``,
-    attachment.base64,
-    `--${boundary}--`,
-  ].join('\r\n');
-}
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Resend API error ${response.status}: ${error}`);
+  }
 
-function wrapBase64(b64) {
-  return b64.match(/.{1,76}/g).join('\r\n');
+  return response.json();
 }
 
 function jsonResponse(data, status, corsHeaders) {
