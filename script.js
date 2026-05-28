@@ -1,37 +1,4 @@
 // ===========================
-// Boot Sequence
-// ===========================
-(function initBoot() {
-    const boot = document.getElementById('boot-sequence');
-    if (!boot) return;
-
-    const alreadyBooted = sessionStorage.getItem('syn_booted');
-
-    if (alreadyBooted) {
-        boot.classList.add('hidden');
-        return;
-    }
-
-    const lines = boot.querySelectorAll('.boot-line');
-    const progress = boot.querySelector('.boot-progress');
-
-    lines.forEach((line, i) => {
-        const delay = parseInt(line.dataset.delay || 0, 10);
-        setTimeout(() => line.classList.add('visible'), 300 + delay);
-    });
-
-    if (progress) {
-        setTimeout(() => { progress.style.width = '100%'; }, 400);
-    }
-
-    setTimeout(() => {
-        boot.classList.add('hidden');
-        sessionStorage.setItem('syn_booted', '1');
-    }, 2200);
-})();
-
-
-// ===========================
 // Particle System (Hero Canvas)
 // ===========================
 class ParticleSystem {
@@ -71,50 +38,50 @@ class ParticleSystem {
         this.particles = [];
 
         // Stars — small twinkling dots
-        for (let i = 0; i < 180; i++) {
+        for (let i = 0; i < 160; i++) {
             this.particles.push({
                 type: 'star',
                 x: Math.random() * this.W,
                 y: Math.random() * this.H,
-                size: this.randBetween(0.4, 1.8),
+                size: this.randBetween(0.3, 1.4),
                 opacity: Math.random(),
-                speed: this.randBetween(0.003, 0.015),
+                speed: this.randBetween(0.003, 0.012),
                 dir: Math.random() > 0.5 ? 1 : -1,
             });
         }
 
         // Nodes — moving glowing dots forming a network
-        for (let i = 0; i < 55; i++) {
+        for (let i = 0; i < 45; i++) {
             this.particles.push({
                 type: 'node',
                 x: Math.random() * this.W,
                 y: Math.random() * this.H,
-                vx: this.randBetween(-0.35, 0.35),
-                vy: this.randBetween(-0.35, 0.35),
-                size: this.randBetween(1.5, 3.5),
-                opacity: this.randBetween(0.4, 0.9),
-                color: Math.random() > 0.5 ? '0,245,255' : '123,47,255',
+                vx: this.randBetween(-0.3, 0.3),
+                vy: this.randBetween(-0.3, 0.3),
+                size: this.randBetween(1.2, 2.8),
+                opacity: this.randBetween(0.35, 0.8),
+                color: Math.random() > 0.5 ? '59,130,246' : '6,182,212',
             });
         }
 
         // Data streams — vertical light lines
-        for (let i = 0; i < 14; i++) {
-            const len = this.randBetween(60, 160);
+        for (let i = 0; i < 10; i++) {
+            const len = this.randBetween(50, 130);
             this.particles.push({
                 type: 'stream',
                 x: Math.random() * this.W,
                 y: this.randBetween(-len, this.H),
                 len,
-                speed: this.randBetween(1.2, 3.5),
-                opacity: this.randBetween(0.08, 0.25),
-                color: Math.random() > 0.5 ? '0,245,255' : '0,255,136',
+                speed: this.randBetween(1.0, 2.8),
+                opacity: this.randBetween(0.06, 0.18),
+                color: Math.random() > 0.5 ? '59,130,246' : '6,182,212',
             });
         }
     }
 
     drawConnections(nodes) {
-        const CONN_DIST = 160;
-        const MOUSE_DIST = 220;
+        const CONN_DIST = 150;
+        const MOUSE_DIST = 200;
         const ctx = this.ctx;
 
         for (let i = 0; i < nodes.length; i++) {
@@ -123,27 +90,27 @@ class ParticleSystem {
                 const dy = nodes[i].y - nodes[j].y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < CONN_DIST) {
-                    const alpha = (1 - dist / CONN_DIST) * 0.22;
+                    const alpha = (1 - dist / CONN_DIST) * 0.18;
                     ctx.beginPath();
                     ctx.moveTo(nodes[i].x, nodes[i].y);
                     ctx.lineTo(nodes[j].x, nodes[j].y);
-                    ctx.strokeStyle = `rgba(0,245,255,${alpha})`;
+                    ctx.strokeStyle = `rgba(59,130,246,${alpha})`;
                     ctx.lineWidth = 0.5;
                     ctx.stroke();
                 }
             }
 
-            // Lines to mouse
+            // Lines to mouse — orange highlight
             const mdx = nodes[i].x - this.mouse.x;
             const mdy = nodes[i].y - this.mouse.y;
             const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
             if (mdist < MOUSE_DIST) {
-                const alpha = (1 - mdist / MOUSE_DIST) * 0.6;
+                const alpha = (1 - mdist / MOUSE_DIST) * 0.5;
                 ctx.beginPath();
                 ctx.moveTo(nodes[i].x, nodes[i].y);
                 ctx.lineTo(this.mouse.x, this.mouse.y);
-                ctx.strokeStyle = `rgba(123,47,255,${alpha})`;
-                ctx.lineWidth = 0.8;
+                ctx.strokeStyle = `rgba(249,115,22,${alpha})`;
+                ctx.lineWidth = 0.7;
                 ctx.stroke();
             }
         }
@@ -171,8 +138,8 @@ class ParticleSystem {
                 const dx = p.x - this.mouse.x;
                 const dy = p.y - this.mouse.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 90 && dist > 0) {
-                    const force = (90 - dist) / 90 * 2;
+                if (dist < 80 && dist > 0) {
+                    const force = (80 - dist) / 80 * 1.5;
                     p.x += (dx / dist) * force;
                     p.y += (dy / dist) * force;
                 }
@@ -202,20 +169,18 @@ class ParticleSystem {
             if (p.type === 'star') {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(200,230,255,${p.opacity * 0.8})`;
+                ctx.fillStyle = `rgba(180,210,255,${p.opacity * 0.7})`;
                 ctx.fill();
 
             } else if (p.type === 'node') {
-                // Outer glow
                 const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 5);
-                grd.addColorStop(0, `rgba(${p.color},${p.opacity * 0.5})`);
+                grd.addColorStop(0, `rgba(${p.color},${p.opacity * 0.4})`);
                 grd.addColorStop(1, `rgba(${p.color},0)`);
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size * 5, 0, Math.PI * 2);
                 ctx.fillStyle = grd;
                 ctx.fill();
 
-                // Core dot
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(${p.color},${p.opacity})`;
@@ -225,7 +190,7 @@ class ParticleSystem {
                 const grd = ctx.createLinearGradient(p.x, p.y, p.x, p.y + p.len);
                 grd.addColorStop(0, `rgba(${p.color},0)`);
                 grd.addColorStop(0.4, `rgba(${p.color},${p.opacity})`);
-                grd.addColorStop(0.7, `rgba(${p.color},${p.opacity * 0.6})`);
+                grd.addColorStop(0.7, `rgba(${p.color},${p.opacity * 0.5})`);
                 grd.addColorStop(1, `rgba(${p.color},0)`);
                 ctx.beginPath();
                 ctx.moveTo(p.x, p.y);
@@ -258,79 +223,6 @@ if (heroCanvas) {
         particleSystem = new ParticleSystem(heroCanvas);
     }
 }
-
-
-// ===========================
-// Custom Cursor
-// ===========================
-const cursorDot = document.getElementById('cursorDot');
-const cursorRing = document.getElementById('cursorRing');
-
-let ringX = 0, ringY = 0;
-let dotX = 0, dotY = 0;
-let cursorRaf = null;
-
-function updateCursorRing() {
-    ringX += (dotX - ringX) * 0.12;
-    ringY += (dotY - ringY) * 0.12;
-    if (cursorRing) {
-        cursorRing.style.left = ringX + 'px';
-        cursorRing.style.top = ringY + 'px';
-    }
-    cursorRaf = requestAnimationFrame(updateCursorRing);
-}
-
-if (cursorDot && cursorRing) {
-    window.addEventListener('mousemove', (e) => {
-        dotX = e.clientX;
-        dotY = e.clientY;
-        cursorDot.style.left = dotX + 'px';
-        cursorDot.style.top = dotY + 'px';
-    });
-    updateCursorRing();
-}
-
-
-// ===========================
-// Card 3D Tilt Effect
-// ===========================
-document.querySelectorAll('[data-tilt]').forEach(card => {
-    const MAX_TILT = 12;
-
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const dx = e.clientX - cx;
-        const dy = e.clientY - cy;
-        const rotX = (-dy / (rect.height / 2)) * MAX_TILT;
-        const rotY = (dx / (rect.width / 2)) * MAX_TILT;
-
-        card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.03,1.03,1.03)`;
-    });
-
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-        card.style.transition = 'transform 0.5s cubic-bezier(0.4,0,0.2,1)';
-        setTimeout(() => { card.style.transition = ''; }, 500);
-    });
-});
-
-
-// ===========================
-// Glitch Text Effect
-// ===========================
-function triggerGlitch(el) {
-    el.classList.remove('glitch-active');
-    void el.offsetWidth; // reflow
-    el.classList.add('glitch-active');
-}
-
-document.querySelectorAll('[data-glitch]').forEach(el => {
-    // Occasional random glitch
-    const interval = 5000 + Math.random() * 8000;
-    setInterval(() => triggerGlitch(el), interval);
-});
 
 
 // ===========================
@@ -372,12 +264,8 @@ const navbar = document.getElementById('navbar');
 
 window.addEventListener('scroll', () => {
     if (!navbar) return;
-    if (window.pageYOffset > 80) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-});
+    navbar.classList.toggle('scrolled', window.pageYOffset > 80);
+}, { passive: true });
 
 
 // ===========================
@@ -385,9 +273,10 @@ window.addEventListener('scroll', () => {
 // ===========================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const href = this.getAttribute('href');
+        const target = document.querySelector(href);
         if (target && navbar) {
+            e.preventDefault();
             const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navbar.offsetHeight;
             window.scrollTo({ top: targetPosition, behavior: 'smooth' });
         }
@@ -407,7 +296,7 @@ const revealObserver = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
-document.querySelectorAll('.service-card, .feature, .contact-item, .stat, .benefit-card, .job-card').forEach(el => {
+document.querySelectorAll('.service-card, .feature, .contact-item, .stat, .benefit-card, .job-card, .about-panel').forEach(el => {
     el.classList.add('reveal');
     revealObserver.observe(el);
 });
@@ -419,13 +308,12 @@ document.querySelectorAll('.service-card, .feature, .contact-item, .stat, .benef
 function animateCounter(el, target, suffix, decimal) {
     const duration = 1800;
     const start = performance.now();
-    const startVal = 0;
 
     function step(now) {
         const elapsed = now - start;
         const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-        const current = startVal + (target - startVal) * eased;
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
         el.textContent = (decimal ? current.toFixed(decimal) : Math.floor(current)) + suffix;
         if (progress < 1) requestAnimationFrame(step);
     }
@@ -469,7 +357,9 @@ function highlightActiveSection() {
         link.classList.remove('active');
         const href = link.getAttribute('href');
         if (href === `#${current}` || (href && href.includes('#') && href.split('#')[1] === current)) {
-            link.classList.add('active');
+            if (!link.classList.contains('nav-link-cta')) {
+                link.classList.add('active');
+            }
         }
     });
 }
@@ -484,9 +374,9 @@ window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
     const heroContent = document.querySelector('.hero-content');
     if (heroContent && scrolled < window.innerHeight) {
-        const factor = scrolled * 0.35;
+        const factor = scrolled * 0.3;
         heroContent.style.transform = `translateY(${factor}px)`;
-        heroContent.style.opacity = Math.max(0, 1 - scrolled / 600);
+        heroContent.style.opacity = Math.max(0, 1 - scrolled / 650);
     }
 }, { passive: true });
 
@@ -528,7 +418,7 @@ if (contactForm) {
             else submitButton.textContent = text;
         };
 
-        setButtonText('Transmitting...');
+        setButtonText('Sending...');
         submitButton.disabled = true;
 
         try {
@@ -539,12 +429,12 @@ if (contactForm) {
             const data = await response.json();
 
             if (data.success) {
-                showNotification(data.message || 'Message transmitted successfully.', 'success');
+                showNotification(data.message || 'Message sent successfully!', 'success');
                 const scrollPos = window.pageYOffset;
                 contactForm.reset();
                 window.scrollTo(0, scrollPos);
             } else {
-                showNotification(data.message || 'Transmission failed. Please try again.', 'error');
+                showNotification(data.message || 'Failed to send. Please try again.', 'error');
             }
         } catch (error) {
             showNotification('Connection error. Please try again or call us directly.', 'error');
@@ -555,6 +445,7 @@ if (contactForm) {
     });
 }
 
+
 // ===========================
 // Notification System
 // ===========================
@@ -562,9 +453,9 @@ function showNotification(message, type = 'info') {
     document.querySelectorAll('.notification').forEach(n => n.remove());
 
     const colors = {
-        success: { bg: 'rgba(0,30,20,0.95)', border: '#00ff88', glow: '#00ff88' },
-        error:   { bg: 'rgba(30,0,10,0.95)', border: '#ff2d78', glow: '#ff2d78' },
-        info:    { bg: 'rgba(0,15,30,0.95)', border: '#00f5ff', glow: '#00f5ff' },
+        success: { bg: 'rgba(2, 44, 34, 0.97)', border: '#4ade80', icon: '#4ade80' },
+        error:   { bg: 'rgba(44, 8, 8, 0.97)',  border: '#f87171', icon: '#f87171' },
+        info:    { bg: 'rgba(10, 20, 50, 0.97)', border: '#3B82F6', icon: '#3B82F6' },
     };
     const c = colors[type] || colors.info;
 
@@ -579,23 +470,23 @@ function showNotification(message, type = 'info') {
         padding: 1rem 1.5rem;
         background: ${c.bg};
         border: 1px solid ${c.border};
-        border-radius: 8px;
-        color: #fff;
-        box-shadow: 0 0 20px ${c.glow}44, 0 8px 30px rgba(0,0,0,0.6);
+        border-radius: 10px;
+        color: #F8FAFC;
+        box-shadow: 0 0 20px ${c.border}33, 0 8px 30px rgba(0,0,0,0.5);
         z-index: 10000;
         max-width: 340px;
         font-size: 0.875rem;
-        font-family: 'Space Grotesk', sans-serif;
+        font-family: 'Inter', sans-serif;
         line-height: 1.5;
-        backdrop-filter: blur(10px);
-        animation: notifIn 0.4s cubic-bezier(0.4,0,0.2,1);
+        backdrop-filter: blur(12px);
+        animation: notifIn 0.35s cubic-bezier(0.4,0,0.2,1);
     `;
 
     document.body.appendChild(notification);
 
     setTimeout(() => {
-        notification.style.animation = 'notifOut 0.4s cubic-bezier(0.4,0,0.2,1) forwards';
-        setTimeout(() => notification.remove(), 400);
+        notification.style.animation = 'notifOut 0.35s cubic-bezier(0.4,0,0.2,1) forwards';
+        setTimeout(() => notification.remove(), 350);
     }, 5000);
 }
 
@@ -618,7 +509,6 @@ document.head.appendChild(notifStyle);
 // DOMContentLoaded Init
 // ===========================
 document.addEventListener('DOMContentLoaded', () => {
-    // Mark home link as active initially
     const homeLink = document.querySelector('a[href="#home"]');
     if (homeLink) homeLink.classList.add('active');
 
@@ -643,5 +533,5 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===========================
 // Console Signature
 // ===========================
-console.log('%c S Y N E T I C A ', 'background:#000508; color:#00f5ff; font-size:20px; font-weight:bold; font-family:monospace; padding:8px 16px; border:1px solid #00f5ff; text-shadow:0 0 10px #00f5ff;');
-console.log('%cBuffalo\'s Intelligent MSP — synetica.us', 'color:#7b2fff; font-size:11px; font-family:monospace;');
+console.log('%c Synetica ', 'background:#0A0E1A; color:#3B82F6; font-size:18px; font-weight:bold; font-family:sans-serif; padding:8px 16px; border:1px solid #3B82F6; border-radius:4px;');
+console.log('%cBuffalo\'s Intelligent MSP — synetica.us', 'color:#64748B; font-size:11px; font-family:sans-serif;');

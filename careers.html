@@ -9,13 +9,10 @@
     <link rel="icon" type="image/png" href="images/Synetica Logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Custom Cursor -->
-    <div class="cursor-dot" id="cursorDot"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
 
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
@@ -35,7 +32,7 @@
                 <li><a href="index.html#services" class="nav-link">Services</a></li>
                 <li><a href="index.html#about" class="nav-link">About</a></li>
                 <li><a href="careers.html" class="nav-link active">Careers</a></li>
-                <li><a href="index.html#contact" class="nav-link nav-link-cta">Contact</a></li>
+                <li><a href="index.html#contact" class="nav-link nav-link-cta">Contact Us</a></li>
             </ul>
         </div>
     </nav>
@@ -43,28 +40,29 @@
     <!-- Hero Section -->
     <section class="hero careers-hero">
         <canvas id="hero-canvas"></canvas>
-        <div class="scan-lines"></div>
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
         <div class="hero-grid"></div>
-        <div class="hud-corner hud-tl"><div class="hud-line hud-h"></div><div class="hud-line hud-v"></div></div>
-        <div class="hud-corner hud-tr"><div class="hud-line hud-h"></div><div class="hud-line hud-v"></div></div>
-        <div class="hud-corner hud-bl"><div class="hud-line hud-h"></div><div class="hud-line hud-v"></div></div>
-        <div class="hud-corner hud-br"><div class="hud-line hud-h"></div><div class="hud-line hud-v"></div></div>
-        <div class="hero-status">
-            <span class="status-dot"></span>
-            <span class="status-text">POSITIONS AVAILABLE</span>
-        </div>
+
         <div class="container hero-content">
-            <div class="hero-label">/ JOIN SYNETICA /</div>
-            <h1 class="hero-title">Join Our Team</h1>
-            <p class="hero-subtitle">Build your career with Buffalo's leading MSP. We're looking for passionate IT professionals to help us deliver exceptional service to Western New York businesses.</p>
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Now Hiring in Buffalo, NY
+            </div>
+            <h1 class="hero-title">Build Your Career<br>with <span class="text-gradient">Synetica</span></h1>
+            <p class="hero-subtitle">Join Buffalo's leading MSP and help us deliver exceptional IT service to Western New York businesses. We're looking for passionate, driven IT professionals who want to make an impact.</p>
             <div class="hero-cta">
-                <a href="#apply" class="btn btn-primary"><span class="btn-inner">Apply Now</span><span class="btn-glow"></span></a>
-                <a href="#positions" class="btn btn-secondary"><span class="btn-inner">View Positions</span></a>
+                <a href="#apply" class="btn btn-primary">
+                    <span class="btn-inner">Apply Now</span>
+                </a>
+                <a href="#positions" class="btn btn-secondary">
+                    <span class="btn-inner">View Open Positions</span>
+                </a>
             </div>
         </div>
+
         <div class="scroll-indicator">
-            <div class="scroll-track"><div class="scroll-thumb"></div></div>
-            <span class="scroll-label">SCROLL</span>
+            <div class="scroll-line"></div>
         </div>
     </section>
 
@@ -73,7 +71,7 @@
         <div class="section-bg-grid"></div>
         <div class="container">
             <div class="section-header">
-                <div class="section-label">/ BENEFITS /</div>
+                <div class="section-label">Benefits</div>
                 <h2 class="section-title">Why Work at Synetica?</h2>
                 <p class="section-subtitle">We invest in our team because they're our greatest asset</p>
             </div>
@@ -96,7 +94,7 @@
                             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                         </svg>
                     </div>
-                    <h3>Health & Wellness</h3>
+                    <h3>Health &amp; Wellness</h3>
                     <p>Comprehensive health, dental, and vision insurance. Plus wellness programs and gym membership.</p>
                 </div>
 
@@ -153,8 +151,8 @@
         <div class="section-bg-circuit"></div>
         <div class="container">
             <div class="section-header">
-                <div class="section-label">/ OPEN POSITIONS /</div>
-                <h2 class="section-title">Open Positions</h2>
+                <div class="section-label">Open Positions</div>
+                <h2 class="section-title">Current Openings</h2>
                 <p class="section-subtitle">Find your next opportunity in Buffalo, NY</p>
             </div>
 
@@ -173,7 +171,7 @@
                     </div>
                     <p class="job-description">Provide technical support to clients, troubleshoot hardware/software issues, and maintain IT infrastructure. Perfect for someone starting their MSP career.</p>
                     <div class="job-requirements">
-                        <strong>Requirements:</strong>
+                        <strong>Requirements</strong>
                         <ul>
                             <li>1-3 years IT support experience</li>
                             <li>CompTIA A+ or equivalent certification</li>
@@ -197,7 +195,7 @@
                     </div>
                     <p class="job-description">Design, implement, and maintain network infrastructure for our clients. Work with firewalls, switches, routers, and VPNs.</p>
                     <div class="job-requirements">
-                        <strong>Requirements:</strong>
+                        <strong>Requirements</strong>
                         <ul>
                             <li>3-5 years network engineering experience</li>
                             <li>CCNA or equivalent certification (CCNP preferred)</li>
@@ -221,7 +219,7 @@
                     </div>
                     <p class="job-description">Monitor security systems, conduct vulnerability assessments, and implement security solutions to protect our clients' data and systems.</p>
                     <div class="job-requirements">
-                        <strong>Requirements:</strong>
+                        <strong>Requirements</strong>
                         <ul>
                             <li>3+ years cybersecurity experience</li>
                             <li>Security+ or CISSP certification</li>
@@ -245,7 +243,7 @@
                     </div>
                     <p class="job-description">Design and implement cloud infrastructure solutions for clients using Azure, AWS, and hybrid cloud environments.</p>
                     <div class="job-requirements">
-                        <strong>Requirements:</strong>
+                        <strong>Requirements</strong>
                         <ul>
                             <li>5+ years cloud architecture experience</li>
                             <li>Azure or AWS certification required</li>
@@ -262,7 +260,7 @@
     <section class="application-form" id="apply">
         <div class="container">
             <div class="section-header">
-                <div class="section-label">/ APPLICATION /</div>
+                <div class="section-label">Application</div>
                 <h2 class="section-title">Apply Now</h2>
                 <p class="section-subtitle">Submit your application and join the Synetica team</p>
             </div>
@@ -303,7 +301,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="resume">Resume/CV * (PDF, DOC, DOCX - Max 5MB)</label>
+                    <label for="resume">Resume/CV * (PDF, DOC, DOCX &mdash; Max 5MB)</label>
                     <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
                     <small class="file-info">Upload your resume in PDF or Word format</small>
                 </div>
@@ -330,7 +328,9 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary"><span class="btn-inner">Submit Application</span><span class="btn-glow"></span></button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-inner">Submit Application</span>
+                </button>
             </form>
         </div>
     </section>
@@ -341,9 +341,9 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>SYNETICA</h3>
+                    <h3>Synetica</h3>
                     <p>Buffalo's trusted MSP for comprehensive IT solutions and managed services in Western New York.</p>
-                    <p class="footer-address">&#x25CF; 219 Lexington Ave, Buffalo, NY 14222</p>
+                    <p class="footer-address">219 Lexington Ave, Buffalo, NY 14222</p>
                 </div>
                 <div class="footer-section">
                     <h4>Quick Links</h4>
@@ -372,7 +372,7 @@
                                 <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
                             </svg>
                         </a>
-                        <a href="#" aria-label="Twitter">
+                        <a href="#" aria-label="Twitter / X">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
                             </svg>
@@ -381,7 +381,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Synetica - Buffalo MSP | Managed IT Services for Western New York | All rights reserved.</p>
+                <p>&copy; 2025 Synetica &mdash; Buffalo MSP | Managed IT Services for Western New York | All rights reserved.</p>
             </div>
         </div>
     </footer>
