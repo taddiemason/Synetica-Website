@@ -42,6 +42,11 @@ async function handleContactForm(request, env, corsHeaders) {
   try {
     const formData = await request.formData();
 
+    // Honeypot: bots fill the hidden "_hp" field. Silently accept and drop.
+    if (formData.get('_hp')) {
+      return jsonResponse({ success: true, message: 'Thank you! Your message has been sent successfully.' }, 200, corsHeaders);
+    }
+
     const name    = formData.get('name');
     const email   = formData.get('email');
     const phone   = formData.get('phone');
@@ -81,6 +86,11 @@ async function handleContactForm(request, env, corsHeaders) {
 async function handleCareersApplication(request, env, corsHeaders) {
   try {
     const formData = await request.formData();
+
+    // Honeypot: bots fill the hidden "_hp" field. Silently accept and drop.
+    if (formData.get('_hp')) {
+      return jsonResponse({ success: true, message: 'Application submitted successfully! We will review your application and get back to you soon.' }, 200, corsHeaders);
+    }
 
     const firstName   = formData.get('firstName');
     const lastName    = formData.get('lastName');

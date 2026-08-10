@@ -9,7 +9,24 @@
     <meta name="geo.placename" content="Buffalo">
     <meta name="geo.position" content="42.886447;-78.878369">
     <title>Buffalo MSP &amp; IT Services | Synetica | Western New York Managed IT Provider</title>
+    <link rel="canonical" href="https://synetica.us/">
+    <link rel="icon" href="favicon.ico" sizes="any">
     <link rel="icon" type="image/png" href="images/Synetica Logo.png">
+    <link rel="icon" type="image/png" href="images/Synetica Logo White.png" media="(prefers-color-scheme: dark)">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+    <!-- Open Graph / social share -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Synetica">
+    <meta property="og:title" content="Buffalo MSP &amp; IT Services | Synetica">
+    <meta property="og:description" content="Managed IT, cybersecurity, and cloud solutions for Western New York businesses — a local Buffalo team.">
+    <meta property="og:url" content="https://synetica.us/">
+    <meta property="og:image" content="https://synetica.us/images/Synetica%20Logo%20Full.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Buffalo MSP &amp; IT Services | Synetica">
+    <meta name="twitter:description" content="Managed IT, cybersecurity, and cloud solutions for Western New York businesses.">
+    <meta name="twitter:image" content="https://synetica.us/images/Synetica%20Logo%20Full.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -19,9 +36,9 @@
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
       "name": "Synetica",
-      "image": "https://raw.githubusercontent.com/taddiemason/Synetica-Website/claude/synetica-msp-website-012TNubQC37JiDpKAZqpcmHL/images/Synetica%20Logo%20Full.png",
-      "@id": "https://synetica-website.pages.dev",
-      "url": "https://synetica-website.pages.dev",
+      "image": "https://synetica.us/images/Synetica%20Logo%20Full.png",
+      "@id": "https://synetica.us",
+      "url": "https://synetica.us",
       "telephone": "(716) 341-3678",
       "priceRange": "$$",
       "address": {
@@ -43,10 +60,6 @@
         "opens": "09:00",
         "closes": "17:00"
       },
-      "sameAs": [
-        "https://www.linkedin.com/company/synetica",
-        "https://twitter.com/synetica"
-      ],
       "areaServed": {
         "@type": "GeoCircle",
         "geoMidpoint": {
@@ -56,12 +69,7 @@
         },
         "geoRadius": "50000"
       },
-      "description": "Buffalo's premier MSP providing expert IT solutions for Western New York businesses. Managed services, cybersecurity, and cloud solutions.",
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.9",
-        "reviewCount": "127"
-      }
+      "description": "Buffalo's premier MSP providing expert IT solutions for Western New York businesses. Managed services, cybersecurity, and cloud solutions."
     }
     </script>
 </head>
@@ -72,7 +80,7 @@
         <div class="container nav-container">
             <div class="logo">
                 <a href="#home">
-                    <img src="images/Synetica Logo Navbar.png" alt="Synetica - Buffalo MSP" class="logo-img">
+                    <img src="images/Synetica Logo Navbar White.png" alt="Synetica - Buffalo MSP" class="logo-img">
                 </a>
             </div>
             <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
@@ -133,8 +141,8 @@
                 </div>
                 <div class="trust-divider"></div>
                 <div class="trust-stat">
-                    <span class="trust-val">&#9733; 4.9</span>
-                    <span class="trust-label">Client Rating</span>
+                    <span class="trust-val">Local</span>
+                    <span class="trust-label">Buffalo, NY</span>
                 </div>
             </div>
         </div>
@@ -260,7 +268,7 @@
                         </div>
                         <div class="stat">
                             <h3 class="stat-counter" data-target="99.9" data-suffix="%" data-decimal="1">0%</h3>
-                            <p>Uptime Guarantee</p>
+                            <p>Uptime SLA Target</p>
                         </div>
                     </div>
                 </div>
@@ -273,20 +281,20 @@
                         </div>
                         <div class="panel-metrics">
                             <div class="panel-metric">
-                                <span class="pm-label">Avg Response</span>
+                                <span class="pm-label">Response SLA</span>
                                 <span class="pm-value">&lt; 15 <span>min</span></span>
                             </div>
                             <div class="panel-metric">
-                                <span class="pm-label">Client Uptime</span>
+                                <span class="pm-label">Uptime Target</span>
                                 <span class="pm-value">99.9<span>%</span></span>
                             </div>
                             <div class="panel-metric">
-                                <span class="pm-label">Issues Resolved</span>
-                                <span class="pm-value">2,400<span>+</span></span>
+                                <span class="pm-label">Monitoring</span>
+                                <span class="pm-value">24/7<span></span></span>
                             </div>
                             <div class="panel-metric">
-                                <span class="pm-label">Client Rating</span>
-                                <span class="pm-value">4.9 <span>/ 5</span></span>
+                                <span class="pm-label">Support</span>
+                                <span class="pm-value">Local <span>team</span></span>
                             </div>
                         </div>
                         <div class="panel-services">
@@ -405,6 +413,7 @@
                 </div>
 
                 <form class="contact-form" id="contactForm" action="#contact">
+                    <input type="text" name="_hp" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
                     <div class="form-group">
                         <label for="name">Your Name</label>
                         <input type="text" id="name" name="name" placeholder="John Smith" required>
@@ -465,18 +474,11 @@
                 </div>
                 <div class="footer-section">
                     <h4>Connect</h4>
-                    <div class="social-links">
-                        <a href="#" aria-label="LinkedIn">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
-                            </svg>
-                        </a>
-                        <a href="#" aria-label="Twitter / X">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
-                            </svg>
-                        </a>
-                    </div>
+                    <ul>
+                        <li><a href="tel:+17163413678">(716) 341-3678</a></li>
+                        <li><a href="mailto:info@synetica.us">info@synetica.us</a></li>
+                        <li><a href="#contact">Get a Free Assessment</a></li>
+                    </ul>
                 </div>
             </div>
             <div class="footer-bottom">
