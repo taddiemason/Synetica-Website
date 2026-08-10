@@ -1,0 +1,10 @@
+# [assets] directory is ".", so everything in the repo would otherwise be
+# served over HTTP — /worker.js and /wrangler.toml were both returning 200 in
+# production before this file existed. Same syntax as .gitignore.
+worker.js
+lib/
+wrangler.toml
+.assetsignore
+.gitignore
+README.md
+.git/

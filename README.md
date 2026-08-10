@@ -58,7 +58,7 @@ A modern, mobile-first website for Synetica, a Managed Service Provider (MSP) sp
 
 ### Cloudflare Workers with Wrangler (Current Setup)
 
-This website is deployed as a **Cloudflare Worker** that serves static files from GitHub and handles contact form submissions via **Web3Forms**.
+This website is deployed as a **Cloudflare Worker** that serves static files and handles form submissions, sending email via **Cloudflare Email Service**.
 
 #### Deploy with Wrangler CLI
 
@@ -78,25 +78,71 @@ That's it! Your site will be live on Cloudflare's global network.
 #### How It Works
 
 The `worker.js` file:
-- **Serves static files** from this GitHub repository with intelligent caching
-- **Handles contact forms** at `/api/contact` route using Web3Forms API
-- **Handles career applications** at `/careers-application` route using Web3Forms API
+- **Serves static files** from this repository with intelligent caching
+- **Handles contact forms** at `/api/contact` → emails `info@synetica.us`
+- **Handles career applications** at `/careers-application` → emails `careers@synetica.us` with the résumé attached
 - **CORS enabled** for cross-origin requests
-- **Automatic content-type detection** for all file types
 - **Smart caching** (HTML: 1hr, CSS/JS: 1 day, Images: 1 week)
 
-Your site is deployed with:
-- ✅ Free SSL/TLS certificates
-- ✅ Global CDN distribution (300+ locations)
-- ✅ Integrated contact form handling (no separate Functions needed)
-- ✅ Web3Forms email delivery to info@synetica.us and careers@synetica.us
-- ✅ Custom domain support
-- ✅ Built-in CORS and security headers
+Email templates and transport live in `lib/email.js`, so changing wording or
+swapping providers is a one-file change.
 
 #### Configuration Files
 
-- **wrangler.toml**: Worker configuration (worker name, compatibility date)
-- **worker.js**: Main worker script with form handlers and static file serving
+- **wrangler.toml**: Worker config — the `send_email` binding, and the
+  `EMAIL_FROM` / `CONTACT_TO` / `CAREERS_TO` vars
+- **worker.js**: Routing, validation, static file serving
+- **lib/email.js**: Email templates (branded HTML + plain text) and sending
+- **.assetsignore**: Keeps `worker.js`, `wrangler.toml`, and `lib/` from being
+  served publicly — `[assets] directory = "."` would otherwise expose them
+
+## Email Setup
+
+Forms send through [Cloudflare Email Service](https://developers.cloudflare.com/email-service/)
+via the `send_email` binding — no API keys in the codebase.
+
+`synetica.us` receives mail on Microsoft 365, and Email Sending does **not**
+interfere with that: it provisions SPF, DKIM, and bounce-handling MX records
+under `cf-bounce.synetica.us`, leaving the apex `MX`, SPF, and
+`selector1`/`selector2._domainkey` records for M365 untouched. SPF is evaluated
+against the `cf-bounce` Return-Path, and DMARC passes via DKIM alignment.
+
+### One-time domain onboarding
+
+```bash
+npx wrangler email sending enable synetica.us
+npx wrangler email sending dns get synetica.us   # verify records landed
+```
+
+⚠️ Onboarding overwrites `_dmarc.synetica.us` with `v=DMARC1; p=reject;`.
+Restore the existing policy immediately afterward so DMARC reports keep flowing
+and M365 mail isn't hard-rejected before alignment is confirmed:
+
+```
+v=DMARC1; p=none; rua=mailto:1599970809bc49df9f2376a9238c6baf@dmarc-reports.cloudflare.net
+```
+
+Tighten to `p=quarantine; pct=25` and then `p=reject` only once DMARC reports
+show both M365 and Cloudflare passing.
+
+Also trim the stale MailChannels include from the apex SPF record (left over
+from an earlier setup, and a wasted lookup against SPF's 10-lookup limit):
+
+```
+v=spf1 include:spf.protection.outlook.com -all
+```
+
+### Verifying
+
+After deploying, submit the contact form and confirm the mail lands in the
+`info@synetica.us` **Inbox** (not Junk) with `dkim=pass` and `dmarc=pass` in
+the `Authentication-Results` header. Then:
+
+1. Delete `sendViaResend()` from `lib/email.js`
+2. `npx wrangler secret delete RESEND_API_KEY`
+
+Until that's done, sends fall back to Resend automatically if the Cloudflare
+binding rejects them, so form submissions are never silently dropped.
 
 #### Cloudflare Pages Build Settings
 
@@ -126,29 +172,29 @@ Synetica-Website/
 ├── index.html                      # Main HTML file
 ├── styles.css                      # All styles (mobile-first)
 ├── script.js                       # Interactive features
-├── worker.js                       # Cloudflare Worker (handles forms + static files)
+├── worker.js                       # Cloudflare Worker (routing + static files)
+├── lib/
+│   └── email.js                   # Email templates + Email Service sending
 ├── wrangler.toml                   # Wrangler configuration
-├── functions/                      # Legacy Functions directory (not used with worker)
-│   ├── api/
-│   │   └── contact.js             # Legacy handler (functionality in worker.js)
-│   └── careers-application.js     # Legacy handler (functionality in worker.js)
+├── .assetsignore                   # Keeps source/config out of public assets
 ├── _headers                        # HTTP headers
 ├── _redirects                      # URL redirects
 ├── .gitignore                      # Git ignore rules
 └── README.md                       # Documentation
 ```
 
-**Note:** When using `worker.js` with wrangler, the form handlers are integrated directly in the worker. The `/functions/` directory is not used.
-
 ## Customization
 
 ### Colors
-Edit CSS variables in `styles.css`:
+Edit CSS variables in `styles.css`. Note that `lib/email.js` carries its own
+copy of the palette — HTML email requires inline styles, so it can't read the
+stylesheet. Update both if you rebrand.
+
 ```css
 :root {
-    --primary-color: #2563eb;
-    --secondary-color: #8b5cf6;
-    --accent-color: #06b6d4;
+    --blue-500: #3B82F6;
+    --cyan-500: #06B6D4;
+    --orange-500: #F97316;
 }
 ```
 
@@ -159,21 +205,22 @@ Edit CSS variables in `styles.css`:
 
 ### Contact Forms
 
-The website includes two functional contact forms integrated in **worker.js** and powered by **Web3Forms**:
+Two forms, both handled in `worker.js` with templates in `lib/email.js`:
 
-1. **Contact Form** (`/api/contact`)
-   - Handler: Integrated in `worker.js` (`handleContactForm` function)
-   - Sends to: `info@synetica.us`
+1. **Contact Form** (`POST /api/contact`)
+   - Handler: `handleContactForm`
+   - Sends to: `CONTACT_TO` (`info@synetica.us`)
    - Fields: Name, Email, Phone, Company, Message
-   - Web3Forms Access Key: `96109e90-d006-4c97-9436-77ad8757b056`
+   - `Reply-To` is set to the visitor, so replying goes straight to them
 
-2. **Careers Application** (`/careers-application`)
-   - Handler: Integrated in `worker.js` (`handleCareersApplication` function)
-   - Sends to: `careers@synetica.us`
-   - Supports: Resume attachments (up to 5MB), Position applications
-   - Web3Forms Access Key: `47ebe115-0067-49be-a556-4deafa5dbb65`
+2. **Careers Application** (`POST /careers-application`)
+   - Handler: `handleCareersApplication`
+   - Sends to: `CAREERS_TO` (`careers@synetica.us`)
+   - Résumé attached, 5MB cap (Email Service allows 25 MiB total)
+   - `Reply-To` is set to the applicant
 
-Both forms are handled directly by the Cloudflare Worker with Web3Forms API for reliable email delivery.
+Recipients are configured as vars in `wrangler.toml`, not hardcoded. See
+[Email Setup](#email-setup) for domain onboarding.
 
 ## Performance
 
