@@ -1,13 +1,15 @@
-# Files in this repo that must NOT be served as public static assets.
-# (assets directory is "." in wrangler.toml, so exclude everything non-web.)
-.git
-.gitignore
-.wrangler
-.assetsignore
-node_modules
-functions
+# [assets] directory is "." in wrangler.toml, so everything in the repo would
+# otherwise be served over HTTP — /worker.js, /wrangler.toml, and the old
+# /functions/*.js (with keys) were all returning 200 before this existed.
+# Same syntax as .gitignore.
 worker.js
+lib/
 wrangler.toml
+.assetsignore
+.gitignore
+README.md
+.git/
+.wrangler
+node_modules
 package.json
 package-lock.json
-README.md

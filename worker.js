@@ -1,3 +1,7 @@
+import { contactEmail, careersEmail, sendFormEmail } from './lib/email.js';
+
+const MAX_RESUME_BYTES = 5 * 1024 * 1024;
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -57,22 +61,14 @@ async function handleContactForm(request, env, corsHeaders) {
       return jsonResponse({ success: false, message: 'Name, email, and message are required' }, 400, corsHeaders);
     }
 
-    const bodyLines = [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      phone   ? `Phone: ${phone}`     : null,
-      company ? `Company: ${company}` : null,
-      '',
-      'Message:',
-      message,
-    ].filter(l => l !== null);
+    const { subject, text, html } = contactEmail({ name, email, phone, company, message });
 
-    await sendEmail(env, {
-      from:     'noreply@synetica.us',
-      to:       'info@synetica.us',
-      replyTo:  email,
-      subject:  `New Contact: ${name} — Synetica Website`,
-      text:     bodyLines.join('\n'),
+    await sendFormEmail(env, {
+      to:      env.CONTACT_TO,
+      replyTo: email,
+      subject,
+      text,
+      html,
     });
 
     return jsonResponse({ success: true, message: 'Thank you! Your message has been sent successfully.' }, 200, corsHeaders);
@@ -110,35 +106,25 @@ async function handleCareersApplication(request, env, corsHeaders) {
       return jsonResponse({ success: false, error: 'Resume file is required' }, 400, corsHeaders);
     }
 
-    if (resume.size > 5 * 1024 * 1024) {
+    if (resume.size > MAX_RESUME_BYTES) {
       return jsonResponse({ success: false, error: 'Resume file size must be less than 5MB' }, 400, corsHeaders);
     }
 
-    const bodyLines = [
-      `Name: ${firstName} ${lastName}`,
-      `Email: ${email}`,
-      `Phone: ${phone}`,
-      `Position: ${position}`,
-      `Experience: ${experience || 'Not specified'}`,
-      `LinkedIn: ${linkedin || 'Not provided'}`,
-      '',
-      'Cover Letter:',
-      coverLetter || 'Not provided',
-    ];
+    const { subject, text, html } = careersEmail({
+      firstName, lastName, email, phone, position, experience, linkedin, coverLetter,
+    });
 
-    const resumeBuffer = await resume.arrayBuffer();
-    const resumeBase64 = Buffer.from(resumeBuffer).toString('base64');
-
-    await sendEmail(env, {
-      from:     'noreply@synetica.us',
-      to:       'careers@synetica.us',
-      replyTo:  email,
-      subject:  `New Job Application: ${position} — ${firstName} ${lastName}`,
-      text:     bodyLines.join('\n'),
-      attachments: [{
+    await sendFormEmail(env, {
+      to:      env.CAREERS_TO,
+      replyTo: email,
+      subject,
+      text,
+      html,
+      attachment: {
+        content:  await resume.arrayBuffer(),
         filename: resume.name,
-        content:  resumeBase64,
-      }],
+        type:     resume.type,
+      },
     });
 
     return jsonResponse({
@@ -153,27 +139,6 @@ async function handleCareersApplication(request, env, corsHeaders) {
       error: 'Failed to submit application. Please email your resume to careers@synetica.us'
     }, 500, corsHeaders);
   }
-}
-
-async function sendEmail(env, { from, to, replyTo, subject, text, attachments }) {
-  const payload = { from, to, reply_to: replyTo, subject, text };
-  if (attachments) payload.attachments = attachments;
-
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Resend API error ${response.status}: ${error}`);
-  }
-
-  return response.json();
 }
 
 function jsonResponse(data, status, corsHeaders) {
