@@ -1,0 +1,13 @@
+# Files in this repo that must NOT be served as public static assets.
+# (assets directory is "." in wrangler.toml, so exclude everything non-web.)
+.git
+.gitignore
+.wrangler
+.assetsignore
+node_modules
+functions
+worker.js
+wrangler.toml
+package.json
+package-lock.json
+README.md
