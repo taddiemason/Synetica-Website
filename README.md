@@ -60,6 +60,10 @@ A modern, mobile-first website for Synetica, a Managed Service Provider (MSP) sp
 
 This website is deployed as a **Cloudflare Worker** that serves static files and handles form submissions, sending email via **Cloudflare Email Service**.
 
+Pushes to `main` deploy automatically via Cloudflare Workers Builds. If you
+rename the branch, update the watched branch in **Workers & Pages →
+synetica-website → Settings → Builds**, or auto-deploys stop silently.
+
 #### Deploy with Wrangler CLI
 
 ```bash
