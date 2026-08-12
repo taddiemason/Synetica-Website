@@ -20,9 +20,26 @@ enabled = true
 name = "EMAIL"
 allowed_sender_addresses = ["noreply@synetica.us"]
 
+# SyneticaBot (/syneticabot) talks to the Tier 1 support Worker over a Service
+# Binding, so the tier chain stays off the public internet and the browser only
+# ever calls same-origin /api/bot/* URLs.
+[[services]]
+binding = "TIER1_SERVICE"
+service = "tier-1-support-worker-telegram"
+
+# Per-IP rate-limit counters and one-time Turnstile verification marks for
+# SyneticaBot. Short-lived keys only — nothing here is durable state.
+[[kv_namespaces]]
+binding = "BOT_RATE_LIMIT_KV"
+id = "PLACEHOLDER_CREATE_WITH_WRANGLER_KV_NAMESPACE_CREATE"
+
 [vars]
 # Must be on a domain onboarded to Email Sending (`wrangler email sending
 # enable synetica.us`). Until then, sends fall back to Resend.
 EMAIL_FROM = "noreply@synetica.us"
 CONTACT_TO = "info@synetica.us"
 CAREERS_TO = "careers@synetica.us"
+
+# Turnstile widget sitekey for the SyneticaBot page (public — the secret half is
+# TURNSTILE_SECRET_KEY, set via `wrangler secret put`).
+TURNSTILE_SITEKEY = ""
