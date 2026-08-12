@@ -16,12 +16,16 @@
     const MAX_LENGTH = 1000;
 
     const TIER_META = {
-        user:   { label: 'You',                          cls: 'from-user' },
-        tier1:  { label: '1️⃣ Tier 1 — Front line',       cls: 'from-tier1' },
-        tier2:  { label: '2️⃣ Tier 2 — Senior',           cls: 'from-tier2' },
-        tier3:  { label: '3️⃣ Tier 3 — Principal',        cls: 'from-tier3' },
-        system: { label: 'SyneticaBot',                   cls: 'from-system' },
+        user:   { label: 'You',                 cls: 'from-user',   avatar: 'bot-avatar-user',   glyph: 'You' },
+        tier1:  { label: 'Tier 1 · Front line', cls: 'from-tier1',  avatar: 'bot-avatar-tier1',  glyph: '1' },
+        tier2:  { label: 'Tier 2 · Senior',     cls: 'from-tier2',  avatar: 'bot-avatar-tier2',  glyph: '2' },
+        tier3:  { label: 'Tier 3 · Principal',  cls: 'from-tier3',  avatar: 'bot-avatar-tier3',  glyph: '3' },
+        system: { label: 'SyneticaBot',         cls: 'from-system', avatar: 'bot-avatar-system', glyph: '!' },
     };
+
+    // Consecutive turns from the same speaker inside this window are visually
+    // grouped: one avatar, one label, tighter spacing — like a messaging app.
+    const GROUP_WINDOW_MS = 5 * 60 * 1000;
 
     const els = {
         messages:    document.getElementById('botMessages'),
@@ -73,26 +77,54 @@
     const sessionId = getSessionId();
 
     // ── rendering ─────────────────────────────────────────────────────────────
+    let lastRendered = { source: null, at: 0 };
+
+    function formatTime(ms) {
+        return new Date(ms).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+
     function addMessage(source, content, opts = {}) {
         const meta = TIER_META[source] || TIER_META.system;
+        const at = opts.createdAt ? opts.createdAt * 1000 : Date.now();
+        const grouped = lastRendered.source === source && (at - lastRendered.at) < GROUP_WINDOW_MS;
+
         const wrap = document.createElement('div');
-        wrap.className = `bot-msg ${meta.cls}`;
+        wrap.className = `bot-msg ${meta.cls}${grouped ? ' is-grouped' : ''}`;
         if (opts.id) wrap.dataset.id = String(opts.id);
 
+        // The visitor's own bubbles are right-aligned and need no avatar or label.
         if (source !== 'user') {
-            const label = document.createElement('div');
+            const avatar = document.createElement('span');
+            avatar.className = `bot-avatar ${meta.avatar}`;
+            avatar.setAttribute('aria-hidden', 'true');
+            avatar.textContent = meta.glyph;
+            wrap.appendChild(avatar);
+        }
+
+        const col = document.createElement('div');
+
+        if (source !== 'user') {
+            const metaRow = document.createElement('div');
+            metaRow.className = 'bot-msg-meta';
+            const label = document.createElement('span');
             label.className = 'bot-msg-label';
             label.textContent = meta.label;
-            wrap.appendChild(label);
+            const time = document.createElement('span');
+            time.className = 'bot-msg-time';
+            time.textContent = formatTime(at);
+            metaRow.append(label, time);
+            col.appendChild(metaRow);
         }
 
         const body = document.createElement('div');
         body.className = 'bot-msg-body';
         // textContent, not innerHTML — model output is never trusted as markup.
         body.textContent = content;
-        wrap.appendChild(body);
+        col.appendChild(body);
 
+        wrap.appendChild(col);
         els.messages.appendChild(wrap);
+        lastRendered = { source, at };
         scrollToEnd();
         return wrap;
     }
@@ -101,30 +133,51 @@
         els.messages.scrollTop = els.messages.scrollHeight;
     }
 
-    function setTyping(on, note) {
+    /**
+     * @param {boolean} on
+     * @param {{tier?: number, note?: string}} [opts] which tier we're waiting on,
+     *   so the bubble is coloured and labelled like the reply that's coming.
+     */
+    function setTyping(on, opts = {}) {
         let el = document.getElementById('botTyping');
         if (!on) {
             if (el) el.remove();
             return;
         }
+
+        const tier = opts.tier || 1;
+        const meta = TIER_META[`tier${tier}`] || TIER_META.tier1;
+
         if (!el) {
             el = document.createElement('div');
             el.id = 'botTyping';
-            el.className = 'bot-msg from-tier1 bot-typing';
-            el.innerHTML = '<div class="bot-typing-dots"><span></span><span></span><span></span></div>';
+            const avatar = document.createElement('span');
+            avatar.className = 'bot-avatar';
+            avatar.setAttribute('aria-hidden', 'true');
+            const col = document.createElement('div');
+            const metaRow = document.createElement('div');
+            metaRow.className = 'bot-msg-meta';
+            const label = document.createElement('span');
+            label.className = 'bot-msg-label';
+            metaRow.appendChild(label);
+            const body = document.createElement('div');
+            body.className = 'bot-msg-body';
+            const dots = document.createElement('span');
+            dots.className = 'bot-typing-dots';
+            dots.innerHTML = '<span></span><span></span><span></span>';
+            body.appendChild(dots);
+            col.append(metaRow, body);
+            el.append(avatar, col);
             els.messages.appendChild(el);
         }
-        const dots = el.querySelector('.bot-typing-dots');
-        if (note && dots && dots.dataset.note !== note) {
-            dots.dataset.note = note;
-            let label = el.querySelector('.bot-msg-label');
-            if (!label) {
-                label = document.createElement('div');
-                label.className = 'bot-msg-label';
-                el.insertBefore(label, dots);
-            }
-            label.textContent = note;
-        }
+
+        el.className = `bot-msg ${meta.cls} bot-typing`;
+        el.querySelector('.bot-avatar').className = `bot-avatar ${meta.avatar}`;
+        el.querySelector('.bot-avatar').textContent = meta.glyph;
+        el.querySelector('.bot-msg-label').textContent = opts.note || meta.label;
+
+        // A typing bubble shouldn't make the next real message look grouped.
+        lastRendered = { source: null, at: 0 };
         scrollToEnd();
     }
 
@@ -192,7 +245,7 @@
             // Our own turn is already on screen from the optimistic render.
             if (m.source === 'user') continue;
             setTyping(false);
-            addMessage(m.source, m.content, { id: m.id });
+            addMessage(m.source, m.content, { id: m.id, createdAt: m.created_at });
             if (m.ticket_id === openTicketId) {
                 maxTierSeen = Math.max(maxTierSeen, TIER_OF[m.source] || 0);
             }
@@ -212,7 +265,11 @@
                 stopPolling();
                 return;
             }
-            setTyping(true, `Escalated to Tier ${pendingTier} — reviewing…`);
+            // Only tiers 2 and 3 are an "escalation" worth announcing — a pending
+            // Tier 1 is just the front line answering.
+            setTyping(true, pendingTier > 1
+                ? { tier: pendingTier, note: `Escalated to Tier ${pendingTier} · reviewing` }
+                : { tier: 1 });
             return;
         }
 
@@ -287,10 +344,18 @@
         turnstileWidgetId = window.turnstile.render(els.turnstile, {
             sitekey,
             appearance: 'interaction-only',
-            callback: (token) => { turnstileToken = token; },
+            callback: (token) => { turnstileToken = token; showTurnstile(false); },
+            'before-interactive-callback': () => { showTurnstile(true); },
             'expired-callback': () => { turnstileToken = null; resetTurnstile(); },
-            'error-callback': () => { turnstileToken = null; },
+            'error-callback': () => { turnstileToken = null; showTurnstile(true); },
         });
+    }
+
+    // `interaction-only` still leaves a "Success!" panel sitting in the composer,
+    // which reads as clutter in a chat window. Only show the widget while it
+    // genuinely needs the visitor to do something.
+    function showTurnstile(visible) {
+        els.turnstile.classList.toggle('is-visible', visible);
     }
 
     function resetTurnstile() {
@@ -348,7 +413,7 @@
                 const openTicketId = data.ticket ? data.ticket.id : null;
                 for (const m of data.messages || []) {
                     lastId = Math.max(lastId, m.id);
-                    addMessage(m.source, m.content, { id: m.id });
+                    addMessage(m.source, m.content, { id: m.id, createdAt: m.created_at });
                     if (m.ticket_id === openTicketId) {
                         maxTierSeen = Math.max(maxTierSeen, TIER_OF[m.source] || 0);
                     }
