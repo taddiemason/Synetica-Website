@@ -1,41 +1,4 @@
 // ===========================
-// Intro Splash (logo reveal)
-// ===========================
-(() => {
-    const splash = document.getElementById('intro-splash');
-    if (!splash) return;
-
-    const seen = sessionStorage.getItem('synetica-intro-seen');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (seen || reduceMotion) {
-        splash.remove();
-        return;
-    }
-
-    const video = document.getElementById('intro-splash-video');
-
-    const dismiss = () => {
-        sessionStorage.setItem('synetica-intro-seen', '1');
-        splash.classList.add('intro-splash-hide');
-        splash.removeEventListener('click', dismiss);
-        setTimeout(() => splash.remove(), 650);
-    };
-
-    if (!video) {
-        dismiss();
-        return;
-    }
-
-    video.addEventListener('ended', dismiss);
-    video.addEventListener('error', dismiss);
-    splash.addEventListener('click', dismiss);
-
-    video.src = video.dataset.src;
-    video.play().catch(dismiss);
-})();
-
-// ===========================
 // Particle System (Hero Canvas)
 // ===========================
 class ParticleSystem {
