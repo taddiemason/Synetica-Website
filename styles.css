@@ -394,6 +394,35 @@ h1, h2, h3 {
 }
 
 /* ===========================
+   Intro Splash
+   =========================== */
+.intro-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-void);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.intro-splash video {
+    max-width: min(90vw, 640px);
+    max-height: 70vh;
+    width: auto;
+    height: auto;
+}
+
+.intro-splash.intro-splash-hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* ===========================
    Hero Section
    =========================== */
 .hero {
@@ -1308,6 +1337,7 @@ h1, h2, h3 {
     }
     #hero-canvas { display: none; }
     .hero { background: var(--bg-deep); }
+    .intro-splash { display: none; }
 }
 
 :focus-visible {

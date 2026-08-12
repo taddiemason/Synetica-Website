@@ -75,6 +75,12 @@
 </head>
 <body>
 
+    <!-- Intro splash: plays Logo_reveal.mp4 once on first visit per session -->
+    <noscript><style>.intro-splash{display:none}</style></noscript>
+    <div id="intro-splash" class="intro-splash" aria-hidden="true">
+        <video id="intro-splash-video" data-src="videos/logo-reveal.mp4" muted playsinline preload="none"></video>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
