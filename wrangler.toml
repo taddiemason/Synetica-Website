@@ -31,7 +31,7 @@ service = "tier-1-support-worker-telegram"
 # SyneticaBot. Short-lived keys only — nothing here is durable state.
 [[kv_namespaces]]
 binding = "BOT_RATE_LIMIT_KV"
-id = "PLACEHOLDER_CREATE_WITH_WRANGLER_KV_NAMESPACE_CREATE"
+id = "2f91ffbab82a45f280dc47df56ce39c8"
 
 [vars]
 # Must be on a domain onboarded to Email Sending (`wrangler email sending
@@ -42,4 +42,4 @@ CAREERS_TO = "careers@synetica.us"
 
 # Turnstile widget sitekey for the SyneticaBot page (public — the secret half is
 # TURNSTILE_SECRET_KEY, set via `wrangler secret put`).
-TURNSTILE_SITEKEY = ""
+TURNSTILE_SITEKEY = "0x4AAAAAAEOVWcrH4pdoXAqg"
